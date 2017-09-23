@@ -1,0 +1,5 @@
+package merge
+
+func MergeInfos() {
+
+}
