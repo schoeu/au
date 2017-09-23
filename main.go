@@ -67,6 +67,8 @@ func readDir(path string, cwd string) {
 			analysis.Process(fullPath, cwd, fileName)
 		}
 	}
+
+	analysis.CalcuData(cwd)
 }
 
 // 获取程序cwd

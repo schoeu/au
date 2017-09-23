@@ -4,11 +4,11 @@ import (
 	"os"
 	"bufio"
 	"io"
-	"io/ioutil"
+	//"io/ioutil"
 	"log"
 	"path/filepath"
 	"regexp"
-	"encoding/json"
+	//"encoding/json"
 	"strings"
 )
 
@@ -40,6 +40,7 @@ func Process(path string, cwd string, name string) {
 	// 读取文件
 	readLine(path)
 	makeMap(cwd)
+
 }
 
 // 单行读取日志
@@ -86,16 +87,7 @@ func makeMap(cwd string) {
 			rsMap[key] = append(rsMap[key], replacedUrl)
 		}
 	}
-
-	dir := ensureDir(cwd)
-
-	b, err := json.Marshal(rsMap)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if e := ioutil.WriteFile(filepath.Join(dir, fileName + tempExt), b, 0777); e != nil {
-		log.Fatal(e)
-	}
+	MergeInfos(rsMap)
 }
 
 // 日志分析
@@ -110,12 +102,5 @@ func analysisFile(content string) {
 		}
 	}
 
-	//count := uniqUrlMap[url]
-	//
-	//if count == 1 {
-	//	uniqUrlMap[url] = count + 1
-	//}
-
 	uniqUrlMap[url] = 1
-
 }
