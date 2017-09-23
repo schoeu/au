@@ -19,7 +19,15 @@ var domainSuffix = []string{
 	".se",".tc",".tk",".tw",".com.tw",".idv.tw",".org.tw",
 	".hk",".co.uk",".me.uk",".org.uk",".vg", ".com.hk"}
 
-func GetDomain(l string) string{
+type urlInfos struct {
+	host string
+	scheme string
+}
+
+func GetDomain(l string) urlInfos{
+
+	uInfo := urlInfos{}
+
 
 	u, err := url.Parse(l)
 	if err != nil {
@@ -27,14 +35,17 @@ func GetDomain(l string) string{
 	}
 
 	host := u.Host
+	uInfo.host = host
+	uInfo.scheme = u.Scheme
 
 	for _, v := range domainSuffix {
 		if strings.Contains(host, v) {
 			tempStr := strings.Replace(host, v, "", -1)
 			splitRs := strings.Split(tempStr, ".")
 			top := splitRs[len(splitRs)-1:]
-			return top[0] + v
+			uInfo.host = top[0] + v
+			return uInfo
 		}
 	}
-	return host
+	return uInfo
 }

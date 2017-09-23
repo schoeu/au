@@ -14,7 +14,8 @@ import (
 
 var (
 	tempRs      = "result"
-	logFileRe   = regexp.MustCompile("mip1_processor.log.\\d{4}")
+	// 需要分析的日志的类型
+	logFileRe   = regexp.MustCompile("mip_processor.log.\\d{4}")
 	consoleTeme = "%c[0;32;40m%s%c[0m\n"
 )
 

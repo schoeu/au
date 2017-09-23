@@ -7,19 +7,28 @@ import (
 	"io/ioutil"
 	"log"
 	"path/filepath"
-	"strings"
 	"regexp"
+	"encoding/json"
+	"fmt"
+	"strings"
 )
 
 var (
 	re         = regexp.MustCompile("http[s]?://\\w+\\S*\\b")
 	ignorExts  = [...]string{".jpg", ".png", ".gif", ".jpeg"}
-	ctt        = []string{}
 	uniqUrlMap = map[string]int{}
-	rsMap      = map[string][]string{}
 	fileName   = ""
 	tempRs     = "result"
 )
+
+type rsMapType map[string][]string
+
+type siteInfo struct {
+	Top    string `json:"top"`
+	Sites   []string `json:"sites"`
+}
+
+type siteCtt [] siteInfo
 
 func Process(path string, cwd string, name string) {
 
@@ -27,14 +36,12 @@ func Process(path string, cwd string, name string) {
 	// 读取文件
 	readLine(path)
 
-	for k, _ := range uniqUrlMap {
-		ctt = append(ctt, k)
-	}
 	makeMap(cwd)
 }
 
 // 单行读取日志
 func readLine(filePath string) {
+	uniqUrlMap = map[string]int{}
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -62,21 +69,34 @@ func ensureDir(cwd string) string{
 }
 
 func makeMap(cwd string) {
+	rsMap := rsMapType{}
 	for k, _ := range uniqUrlMap {
 		top := GetDomain(k)
-
-		rsMap[top] = append(rsMap[top], k)
+		host := top.host
+		scheme := top.scheme
+		replacedUrl := strings.Replace(k, host, "*",-1)
+		replacedUrl = strings.Replace(replacedUrl, scheme + "://", "",1)
+		key := host + "@" + scheme
+		rsMap[key] = append(rsMap[key], replacedUrl)
 	}
 
 	dir := ensureDir(cwd)
 
-	for k, v := range rsMap {
-		tmpfn := filepath.Join(dir, k)
-		content := strings.Join(v, "\n")
-		if err := ioutil.WriteFile(tmpfn, []byte(content), 0777); err != nil {
-			log.Fatal(err)
-		}
+	b, err := json.Marshal(rsMap)
+	if err != nil {
+		fmt.Println("error:", err)
 	}
+	if err := ioutil.WriteFile(dir + ".jox", b, 0777); err != nil {
+		log.Fatal(err)
+	}
+
+	//for k, v := range rsMap {
+	//	tmpfn := filepath.Join(dir, k)
+	//	content := strings.Join(v, "\n")
+	//	if err := ioutil.WriteFile(tmpfn, []byte(content), 0777); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}
 }
 
 // 日志分析

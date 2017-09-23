@@ -17,3 +17,4 @@ src
 pkg
 bin
 result
+.DS_Store
