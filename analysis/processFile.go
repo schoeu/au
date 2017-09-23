@@ -1,7 +1,6 @@
-package processFile
+package analysis
 
 import (
-	"../domain"
 	"os"
 	"bufio"
 	"io"
@@ -13,7 +12,6 @@ import (
 )
 
 var (
-	// 测试用日志路径
 	re         = regexp.MustCompile("http[s]?://\\w+\\S*\\b")
 	ignorExts  = [...]string{".jpg", ".png", ".gif", ".jpeg"}
 	ctt        = []string{}
@@ -65,7 +63,7 @@ func ensureDir(cwd string) string{
 
 func makeMap(cwd string) {
 	for k, _ := range uniqUrlMap {
-		top := domain.GetDomain(k)
+		top := GetDomain(k)
 
 		rsMap[top] = append(rsMap[top], k)
 	}
@@ -75,7 +73,7 @@ func makeMap(cwd string) {
 	for k, v := range rsMap {
 		tmpfn := filepath.Join(dir, k)
 		content := strings.Join(v, "\n")
-		if err := ioutil.WriteFile(tmpfn, []byte(content), 0666); err != nil {
+		if err := ioutil.WriteFile(tmpfn, []byte(content), 0777); err != nil {
 			log.Fatal(err)
 		}
 	}

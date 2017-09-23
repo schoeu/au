@@ -1,5 +1,0 @@
-package merge
-
-func MergeInfos() {
-
-}

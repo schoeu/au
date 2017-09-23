@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./processFile"
+	"./analysis"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -63,7 +63,7 @@ func readDir(path string, cwd string) {
 		if logFileRe.MatchString(fileName) {
 			fmt.Printf(consoleTeme, 0x1B, "process[ " + file.Name() + " ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
-			processFile.Process(fullPath, cwd, fileName)
+			analysis.Process(fullPath, cwd, fileName)
 		}
 	}
 }
@@ -76,17 +76,14 @@ func getCwd() string {
 	}
 	exPath := filepath.Dir(ex)*/
 
-
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-
 	return dir
 }
 
-
+// 清除临时文件&文件夹
 func cleanTmp(dir string) {
 	rsPath := filepath.Join(dir, "../", tempRs)
 	err := os.RemoveAll(rsPath)
