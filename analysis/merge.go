@@ -2,25 +2,25 @@ package analysis
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 	"regexp"
-	"fmt"
 )
 
 var (
 	rs = []rsMapType{}
 )
 
-func MergeInfos(msg rsMapType){
+func MergeInfos(msg rsMapType) {
 	rs = append(rs, msg)
 }
 
 func CalcuData(cwd string) {
 	std := rs[0]
 	tmp := rs[1:]
-	for _, v :=  range tmp {
+	for _, v := range tmp {
 		for i, it := range v {
 			if len(std[i]) > 0 {
 				std[i] = append(std[i], it...)
@@ -40,7 +40,7 @@ func CalcuData(cwd string) {
 	re := regexp.MustCompile("_\\d{2}")
 	fmt.Println()
 	neme := re.ReplaceAllString(fileName, "")
-	if e := ioutil.WriteFile(filepath.Join(dir, neme + tempExt), b, 0777); e != nil {
+	if e := ioutil.WriteFile(filepath.Join(dir, neme+tempExt), b, 0777); e != nil {
 		log.Fatal(e)
 	}
 }

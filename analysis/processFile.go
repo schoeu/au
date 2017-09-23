@@ -1,9 +1,9 @@
 package analysis
 
 import (
-	"os"
 	"bufio"
 	"io"
+	"os"
 	//"io/ioutil"
 	"log"
 	"path/filepath"
@@ -20,18 +20,18 @@ var (
 	tempRs     = "result"
 	tempExt    = ".atmp"
 	// 一个站点最多保存多个少url
-	maxLength  = 10
-	notlimit    = false
+	maxLength = 10
+	notlimit  = false
 )
 
 type rsMapType map[string][]string
 
 type siteInfo struct {
-	Top    string `json:"top"`
-	Sites   []string `json:"sites"`
+	Top   string   `json:"top"`
+	Sites []string `json:"sites"`
 }
 
-type siteCtt [] siteInfo
+type siteCtt []siteInfo
 
 // 日志处理入口
 func Process(path string, cwd string, name string) {
@@ -64,7 +64,7 @@ func readLine(filePath string) {
 }
 
 // 创建临时文件夹存放中间文件
-func ensureDir(cwd string) string{
+func ensureDir(cwd string) string {
 	dirPath := filepath.Join(cwd, tempRs)
 	mkDirErr := os.MkdirAll(dirPath, 0777)
 	if mkDirErr != nil {
@@ -80,9 +80,9 @@ func makeMap(cwd string) {
 		top := GetDomain(k)
 		host := top.host
 		scheme := top.scheme
-		replacedUrl := strings.Replace(k, host, "*",-1)
-		replacedUrl = strings.Replace(replacedUrl, scheme + "://", "",1)
-		key := scheme  + "@" +  host
+		replacedUrl := strings.Replace(k, host, "*", -1)
+		replacedUrl = strings.Replace(replacedUrl, scheme+"://", "", 1)
+		key := scheme + "@" + host
 		if (len(rsMap[key]) < maxLength) || notlimit {
 			rsMap[key] = append(rsMap[key], replacedUrl)
 		}

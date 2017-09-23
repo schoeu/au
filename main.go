@@ -2,18 +2,18 @@ package main
 
 import (
 	"./analysis"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
-	"flag"
 	"time"
 )
 
 var (
-	tempRs      = "result"
+	tempRs = "result"
 	// 需要分析的日志的类型
 	logFileRe   = regexp.MustCompile("mip_processor.log.\\d{4}")
 	consoleTeme = "%c[0;32;40m%s%c[0m\n"
@@ -35,7 +35,7 @@ func main() {
 	inputPath := args[0]
 
 	if !filepath.IsAbs(inputPath) {
-		inputPath = filepath.Join(tmpPath, "..",inputPath)
+		inputPath = filepath.Join(tmpPath, "..", inputPath)
 	}
 
 	// 清除之前临时文件
@@ -43,9 +43,9 @@ func main() {
 
 	start := time.Now()
 	// 读取指定目录下文件list
-    readDir(inputPath, tmpPath)
+	readDir(inputPath, tmpPath)
 
-    during := time.Since(start)
+	during := time.Since(start)
 
 	fmt.Printf(consoleTeme, 0x1B, "processed all success", 0x1B)
 	fmt.Println("cost ", during)
@@ -62,7 +62,7 @@ func readDir(path string, cwd string) {
 	for _, file := range files {
 		fileName := file.Name()
 		if logFileRe.MatchString(fileName) {
-			fmt.Printf(consoleTeme, 0x1B, "process[ " + file.Name() + " ]done!", 0x1B)
+			fmt.Printf(consoleTeme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
 			analysis.Process(fullPath, cwd, fileName)
 		}
