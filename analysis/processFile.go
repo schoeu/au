@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -19,6 +18,10 @@ var (
 	uniqUrlMap = map[string]int{}
 	fileName   = ""
 	tempRs     = "result"
+	tempExt    = ".atmp"
+	// 一个站点最多保存多个少url
+	maxLength  = 10
+	notlimit    = false
 )
 
 type rsMapType map[string][]string
@@ -30,12 +33,12 @@ type siteInfo struct {
 
 type siteCtt [] siteInfo
 
+// 日志处理入口
 func Process(path string, cwd string, name string) {
 
 	fileName = name
 	// 读取文件
 	readLine(path)
-
 	makeMap(cwd)
 }
 
@@ -59,8 +62,9 @@ func readLine(filePath string) {
 	}
 }
 
+// 创建临时文件夹存放中间文件
 func ensureDir(cwd string) string{
-	dirPath := filepath.Join(cwd, tempRs, fileName)
+	dirPath := filepath.Join(cwd, tempRs)
 	mkDirErr := os.MkdirAll(dirPath, 0777)
 	if mkDirErr != nil {
 		log.Fatal(mkDirErr)
@@ -68,6 +72,7 @@ func ensureDir(cwd string) string{
 	return dirPath
 }
 
+// 信息保存到strict中
 func makeMap(cwd string) {
 	rsMap := rsMapType{}
 	for k, _ := range uniqUrlMap {
@@ -76,27 +81,21 @@ func makeMap(cwd string) {
 		scheme := top.scheme
 		replacedUrl := strings.Replace(k, host, "*",-1)
 		replacedUrl = strings.Replace(replacedUrl, scheme + "://", "",1)
-		key := host + "@" + scheme
-		rsMap[key] = append(rsMap[key], replacedUrl)
+		key := scheme  + "@" +  host
+		if (len(rsMap[key]) < maxLength) || notlimit {
+			rsMap[key] = append(rsMap[key], replacedUrl)
+		}
 	}
 
 	dir := ensureDir(cwd)
 
 	b, err := json.Marshal(rsMap)
 	if err != nil {
-		fmt.Println("error:", err)
-	}
-	if err := ioutil.WriteFile(dir + ".jox", b, 0777); err != nil {
 		log.Fatal(err)
 	}
-
-	//for k, v := range rsMap {
-	//	tmpfn := filepath.Join(dir, k)
-	//	content := strings.Join(v, "\n")
-	//	if err := ioutil.WriteFile(tmpfn, []byte(content), 0777); err != nil {
-	//		log.Fatal(err)
-	//	}
-	//}
+	if e := ioutil.WriteFile(filepath.Join(dir, fileName + tempExt), b, 0777); e != nil {
+		log.Fatal(e)
+	}
 }
 
 // 日志分析
@@ -111,5 +110,12 @@ func analysisFile(content string) {
 		}
 	}
 
+	//count := uniqUrlMap[url]
+	//
+	//if count == 1 {
+	//	uniqUrlMap[url] = count + 1
+	//}
+
 	uniqUrlMap[url] = 1
+
 }
