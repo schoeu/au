@@ -37,7 +37,7 @@ func CalcuData(cwd string) {
 		log.Fatal(err)
 	}
 
-	re := regexp.MustCompile("_\\d{2}")
+	re := regexp.MustCompile(".\\d{4}[\\s\\S]+")
 	finalPath := filepath.Join(dir, re.ReplaceAllString(fileName, "")+tempExt)
 	fmt.Printf("\nMerge file in %v\n", finalPath)
 	if e := ioutil.WriteFile(finalPath, b, 0777); e != nil {
