@@ -4,19 +4,21 @@ import (
 	"./analysis"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
 	"time"
+	"io/ioutil"
 )
 
 var (
 	tempRs = "result"
 	// 需要分析的日志的类型
 	logFileRe   = regexp.MustCompile("mip_processor.log.\\d{4}")
-	consoleTeme = "%c[0;32;40m%s%c[0m\n"
+	consoleTheme = "%c[0;32;40m%s%c[0m\n"
+	aType = 1
+	fileSize int64
 )
 
 // 主函数
@@ -45,12 +47,14 @@ func main() {
 	// 读取指定目录下文件list
 	readDir(inputPath, tmpPath)
 
+
 	during := time.Since(start)
 
-	fmt.Printf(consoleTeme, 0x1B, "processed all success", 0x1B)
-	fmt.Println("cost ", during)
+	fmt.Printf(consoleTheme, 0x1B, "processed all success", 0x1B)
+	fmt.Printf("File size is %v MB, cost %v", fileSize/1048576, during)
 
 }
+
 
 // 读取指定目录
 func readDir(path string, cwd string) {
@@ -62,23 +66,20 @@ func readDir(path string, cwd string) {
 	for _, file := range files {
 		fileName := file.Name()
 		if logFileRe.MatchString(fileName) {
-			fmt.Printf(consoleTeme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
+			fileSize += file.Size()
+			fmt.Printf(consoleTheme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
-			analysis.Process(fullPath, cwd, fileName)
+			if aType == 1 {
+				analysis.CountData(fullPath)
+			} else {
+				analysis.Process(fullPath, cwd, fileName)
+			}
 		}
 	}
-
-	analysis.CalcuData(cwd)
 }
 
 // 获取程序cwd
 func getCwd() string {
-	/*ex, err := os.Executable()
-	if err != nil {
-		panic(err)
-	}
-	exPath := filepath.Dir(ex)*/
-
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)

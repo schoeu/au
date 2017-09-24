@@ -1,27 +1,25 @@
 package analysis
 
 import (
-	"bufio"
-	"io"
 	"os"
-	//"io/ioutil"
 	"log"
 	"path/filepath"
 	"regexp"
-	//"encoding/json"
 	"strings"
+	"bufio"
+	"io"
 )
 
 var (
 	re         = regexp.MustCompile("http[s]?://\\w+\\S*\\b")
-	ignorExts  = [...]string{".jpg", ".png", ".gif", ".jpeg"}
+	ignorExts  = [4]string{".jpg", ".png", ".gif", ".jpeg"}
 	uniqUrlMap = map[string]int{}
 	fileName   = ""
 	tempRs     = "result"
 	tempExt    = ".atmp"
 	// 一个站点最多保存多个少url
 	maxLength = 10
-	notlimit  = false
+	notlimit  = true
 )
 
 type rsMapType map[string][]string
