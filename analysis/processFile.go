@@ -1,13 +1,13 @@
 package analysis
 
 import (
-	"os"
+	"bufio"
+	"io"
 	"log"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-	"bufio"
-	"io"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 	tempExt    = ".atmp"
 	// 一个站点最多保存多个少url
 	maxLength = 10
-	notlimit  = true
+	notlimit  = false
 )
 
 type rsMapType map[string][]string

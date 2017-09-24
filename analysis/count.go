@@ -1,10 +1,10 @@
 package analysis
 
 import (
-	"os"
-	"log"
 	"bufio"
 	"io"
+	"log"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -12,13 +12,13 @@ import (
 type tType map[string]int
 
 var (
-	tagRe = regexp.MustCompile("\\[mip-tags used\\]")
+	tagRe    = regexp.MustCompile("\\[mip-tags used\\]")
 	pluginRe = regexp.MustCompile("\\[mip-tags used\\](http[s]?://\\S+): ([\\s\\S]*) log queue")
-	tagsMap = tType{}
+	tagsMap  = tType{}
 )
 
 // 单行读取日志
-func CountData(filePath string){
+func CountData(filePath string) {
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -39,7 +39,7 @@ func CountData(filePath string){
 	}
 }
 
-func GetCountData() tType{
+func GetCountData() tType {
 	return tagsMap
 }
 
