@@ -17,9 +17,8 @@ var (
 	fileName   = ""
 	tempRs     = "result"
 	tempExt    = ".atmp"
-	// 一个站点最多保存多个少url
-	maxLength = 10
-	notlimit  = false
+	limit  	   bool
+	maxLength  int
 )
 
 type rsMapType map[string][]string
@@ -32,8 +31,9 @@ type siteInfo struct {
 type siteCtt []siteInfo
 
 // 日志处理入口
-func Process(path string, cwd string, name string) {
-
+func Process(path string, cwd string, name string, mLength int, lmt bool) {
+	limit = lmt
+	maxLength = mLength
 	fileName = name
 	// 读取文件
 	readLine(path)
@@ -81,7 +81,7 @@ func makeMap(cwd string) {
 		replacedUrl := strings.Replace(k, host, "*", -1)
 		replacedUrl = strings.Replace(replacedUrl, scheme+"://", "", 1)
 		key := scheme + "@" + host
-		if (len(rsMap[key]) < maxLength) || notlimit {
+		if (len(rsMap[key]) < maxLength) || !limit {
 			rsMap[key] = append(rsMap[key], replacedUrl)
 		}
 	}

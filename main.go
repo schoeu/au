@@ -22,6 +22,9 @@ var (
 	anaHelper    string
 	helpInfo     string
 	pattern      string
+	limit      	 bool
+	// 一个站点最多保存多个少url
+	maxLength    int
 	logFileRe    *regexp.Regexp
 )
 
@@ -36,6 +39,8 @@ func main() {
 	flag.StringVar(&anaPath, "path", "", "需要分析的日志文件夹的绝对路径")
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
+	flag.BoolVar(&limit, "limit", true, "是否限制取默认条数")
+	flag.IntVar(&maxLength, "maxLength", 10, "制取默认条数")
 
 	// 获取临时路径
 	tmpPath := getCwd()
@@ -81,7 +86,7 @@ func readDir(path string, cwd string) {
 			fmt.Printf(consoleTheme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
 			if anaType == 1 {
-				analysis.Process(fullPath, cwd, fileName)
+				analysis.Process(fullPath, cwd, fileName, maxLength, limit)
 			} else if anaType == 2 {
 				analysis.CountData(fullPath)
 			} else if anaType == 3 {
