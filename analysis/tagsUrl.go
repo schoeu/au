@@ -12,16 +12,15 @@ import (
 	"strings"
 )
 
-type tagsType struct {
-	name string
-	list []string
-}
-
 var (
-	tagsUrlArr = []tagsType{}
+	tagsUrlArr = map[string][]string{}
+	tagsMaxLength  int
+	tagsLimit      bool
 )
 
-func TagsUrl(filePath string) {
+func TagsUrl(filePath string, mLength int, lmt bool) {
+	tagsMaxLength = mLength
+	tagsLimit = lmt
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -46,24 +45,19 @@ func getTags(c string) {
 		url := tagsInfo[0][1]
 		tags := tagsInfo[0][2]
 		tagsArr := strings.Split(tags, ", ")
-		for _, v := range tagsArr {
-			for i, val := range tagsUrlArr {
-				if v == val.name {
-					item := tagsUrlArr[i].list
-					if (len(item) < maxLength) || !limit {
-						tagsUrlArr[i].list = append(item, url)
-					}
-					break
-				}
+
+
+
+		for _, v := range tagsArr{
+			item := tagsUrlArr[v]
+			if (len(item) < tagsMaxLength) || !tagsLimit {
+				tagsUrlArr[v] = append(item, url)
 			}
-			s := []string{url}
-			t := tagsType{v, s}
-			tagsUrlArr = append(tagsUrlArr, t)
 		}
 	}
 }
 
-func GetTagsMap(cwd string) []tagsType {
+func GetTagsMap(cwd string) map[string][]string {
 	dir := ensureDir(cwd)
 
 	b, err := json.Marshal(tagsUrlArr)

@@ -95,7 +95,7 @@ func readDir(path string, cwd string) {
 			} else if anaType == 2 {
 				analysis.CountData(fullPath)
 			} else if anaType == 3 {
-				analysis.TagsUrl(fullPath)
+				analysis.TagsUrl(fullPath, maxLength, limit)
 			}
 		}
 	}
