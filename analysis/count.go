@@ -7,6 +7,10 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"encoding/json"
+	"path/filepath"
+	"fmt"
+	"io/ioutil"
 )
 
 type tType map[string]int
@@ -33,13 +37,26 @@ func CountData(filePath string) {
 		tmpStr := string(a)
 		if tagRe.MatchString(tmpStr) {
 			analyTags(tmpStr)
-			break
 		}
 
 	}
 }
 
-func GetCountData() tType {
+func GetCountData(cwd string) tType {
+
+	dir := ensureDir(cwd)
+
+	b, err := json.Marshal(tagsMap)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	finalPath := filepath.Join(dir, "count"+tempExt)
+	fmt.Printf("\nCount file in %v\n", finalPath)
+	if e := ioutil.WriteFile(finalPath, b, 0777); e != nil {
+		log.Fatal(e)
+	}
+
 	return tagsMap
 }
 

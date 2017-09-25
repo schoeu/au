@@ -68,8 +68,13 @@ func main() {
 	during := time.Since(start)
 
 	fmt.Printf("File size is %v MB, cost %v", fileSize/1048576, during)
-	analysis.CalcuData(tmpPath)
-
+	if anaType == 1 {
+		analysis.CalcuData(tmpPath)
+	} else if anaType == 2 {
+		analysis.GetCountData(tmpPath)
+	} else if anaType == 3 {
+		analysis.GetTagsMap()
+	}
 }
 
 // 读取指定目录
