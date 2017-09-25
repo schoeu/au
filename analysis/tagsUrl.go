@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	tagsUrlArr = map[string][]string{}
-	tagsMaxLength  int
-	tagsLimit      bool
+	tagsUrlArr    = map[string][]string{}
+	tagsMaxLength int
+	tagsLimit     bool
 )
 
 func TagsUrl(filePath string, mLength int, lmt bool) {
@@ -46,9 +46,7 @@ func getTags(c string) {
 		tags := tagsInfo[0][2]
 		tagsArr := strings.Split(tags, ", ")
 
-
-
-		for _, v := range tagsArr{
+		for _, v := range tagsArr {
 			item := tagsUrlArr[v]
 			if (len(item) < tagsMaxLength) || !tagsLimit {
 				tagsUrlArr[v] = append(item, url)
