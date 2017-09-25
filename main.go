@@ -22,10 +22,10 @@ var (
 	anaHelper    string
 	helpInfo     string
 	pattern      string
-	limit      	 bool
+	limit        bool
 	// 一个站点最多保存多个少url
-	maxLength    int
-	logFileRe    *regexp.Regexp
+	maxLength int
+	logFileRe *regexp.Regexp
 )
 
 // 主函数
@@ -73,7 +73,7 @@ func main() {
 	} else if anaType == 2 {
 		analysis.GetCountData(tmpPath)
 	} else if anaType == 3 {
-		analysis.GetTagsMap()
+		analysis.GetTagsMap(tmpPath)
 	}
 }
 

@@ -2,15 +2,15 @@ package analysis
 
 import (
 	"bufio"
+	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
-	"encoding/json"
-	"path/filepath"
-	"fmt"
-	"io/ioutil"
 )
 
 type tType map[string]int

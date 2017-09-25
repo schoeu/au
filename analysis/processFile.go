@@ -17,7 +17,7 @@ var (
 	fileName   = ""
 	tempRs     = "result"
 	tempExt    = ".atmp"
-	limit  	   bool
+	limit      bool
 	maxLength  int
 )
 

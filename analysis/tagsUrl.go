@@ -1,10 +1,14 @@
 package analysis
 
 import (
-	"os"
-	"log"
 	"bufio"
+	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -32,7 +36,6 @@ func TagsUrl(filePath string) {
 		tmpStr := string(a)
 		if tagRe.MatchString(tmpStr) {
 			getTags(tmpStr)
-			break
 		}
 	}
 }
@@ -44,29 +47,34 @@ func getTags(c string) {
 		tags := tagsInfo[0][2]
 		tagsArr := strings.Split(tags, ", ")
 		for _, v := range tagsArr {
-			if len(tagsUrlArr) == 0 {
-				s := []string{url}
-				t := tagsType{ v, s}
-				tagsUrlArr = append(tagsUrlArr, t)
-				continue
-			}
 			for i, val := range tagsUrlArr {
 				if v == val.name {
 					item := tagsUrlArr[i].list
 					if (len(item) < maxLength) || !limit {
 						tagsUrlArr[i].list = append(item, url)
 					}
-				} else {
-					s := []string{url}
-					t := tagsType{ v, s}
-					tagsUrlArr = append(tagsUrlArr, t)
+					break
 				}
 			}
-
+			s := []string{url}
+			t := tagsType{v, s}
+			tagsUrlArr = append(tagsUrlArr, t)
 		}
 	}
 }
 
-func GetTagsMap() []tagsType{
+func GetTagsMap(cwd string) []tagsType {
+	dir := ensureDir(cwd)
+
+	b, err := json.Marshal(tagsUrlArr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	finalPath := filepath.Join(dir, "tags_urls"+tempExt)
+	fmt.Printf("\nTags file in %v\n", finalPath)
+	if e := ioutil.WriteFile(finalPath, b, 0777); e != nil {
+		log.Fatal(e)
+	}
 	return tagsUrlArr
 }
