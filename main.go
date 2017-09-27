@@ -69,11 +69,11 @@ func main() {
 
 	fmt.Printf("File size is %v MB, cost %v", fileSize/1048576, during)
 	if anaType == 1 {
-		analysis.CalcuData(tmpPath)
+		analysis.CalcuUniqInfo(tmpPath)
 	} else if anaType == 2 {
-		analysis.GetCountData(tmpPath)
+		analysis.GetCountData()
 	} else if anaType == 3 {
-		analysis.GetTagsMap(tmpPath)
+		analysis.GetTagsMap()
 	}
 }
 
@@ -91,11 +91,11 @@ func readDir(path string, cwd string) {
 			fmt.Printf(consoleTheme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
 			if anaType == 1 {
-				analysis.Process(fullPath, cwd, fileName, maxLength, limit)
+				analysis.Process(fullPath, cwd, fileName)
 			} else if anaType == 2 {
 				analysis.CountData(fullPath)
 			} else if anaType == 3 {
-				analysis.TagsUrl(fullPath, maxLength, limit)
+				analysis.TagsUrl(fullPath, cwd, fileName)
 			}
 		}
 	}

@@ -2,7 +2,6 @@ package analysis
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -10,17 +9,30 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"bytes"
+	"sort"
+	"time"
+	"regexp"
 )
+
+type tagsUrlType map[string][]string
+type rsType struct {
+	list []string
+	count int
+}
+
 
 var (
-	tagsUrlArr    = map[string][]string{}
-	tagsMaxLength int
-	tagsLimit     bool
+	tagsUrlArr    = tagsUrlType{}
+	tagsRsUrlArr    = tagsUrlType{}
+	tagTempDir = "./__au_tag_temp__"
+	tagRsPath string
+	tagRelReg   = regexp.MustCompile(`["|']`)
 )
 
-func TagsUrl(filePath string, mLength int, lmt bool) {
-	tagsMaxLength = mLength
-	tagsLimit = lmt
+func TagsUrl(filePath string, cwd string, fileName string) {
+	tagsUrlArr    = tagsUrlType{}
+	tagsRsUrlArr    = tagsUrlType{}
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -33,9 +45,29 @@ func TagsUrl(filePath string, mLength int, lmt bool) {
 			break
 		}
 		tmpStr := string(a)
-		if tagRe.MatchString(tmpStr) {
+		if !tagRelReg.MatchString(tmpStr) && tagRe.MatchString(tmpStr) {
 			getTags(tmpStr)
 		}
+	}
+
+	var buf bytes.Buffer
+	for k, v := range tagsUrlArr {
+		buf.WriteString(k)
+		buf.WriteString(" ")
+		l := len(v)
+		if l > 10 {
+			l = 10
+		}
+		buf.WriteString(strings.Join(v[:l], ","))
+		buf.WriteString("\n")
+	}
+
+	tagRsPath = ensureDir(filepath.Join(cwd, tagTempDir))
+	os.RemoveAll(tagRsPath)
+	finalPath := filepath.Join(tagRsPath, fileName + tempExt)
+	fmt.Printf("\nMerge file in %v\n", finalPath)
+	if e := ioutil.WriteFile(finalPath, []byte(buf.String()), 0777); e != nil {
+		log.Fatal(e)
 	}
 }
 
@@ -47,26 +79,66 @@ func getTags(c string) {
 		tagsArr := strings.Split(tags, ", ")
 
 		for _, v := range tagsArr {
-			item := tagsUrlArr[v]
-			if (len(item) < tagsMaxLength) || !tagsLimit {
-				tagsUrlArr[v] = append(item, url)
-			}
+			tagsUrlArr[v] = append(tagsUrlArr[v], url)
 		}
 	}
 }
 
-func GetTagsMap(cwd string) map[string][]string {
-	dir := ensureDir(cwd)
-
-	b, err := json.Marshal(tagsUrlArr)
+func GetTagsMap() {
+	files, err := ioutil.ReadDir(tagRsPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	finalPath := filepath.Join(dir, "tags_urls"+tempExt)
-	fmt.Printf("\nTags file in %v\n", finalPath)
-	if e := ioutil.WriteFile(finalPath, b, 0777); e != nil {
-		log.Fatal(e)
+	for _, file := range files {
+		fi, err := os.Open(filepath.Join(tagRsPath, file.Name()))
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		defer fi.Close()
+		br := bufio.NewReader(fi)
+		for {
+			a, _, c := br.ReadLine()
+			if c == io.EOF {
+				break
+			}
+			content := string(a)
+			infos := strings.Split(content, " ")
+			if len(infos) > 1 {
+				tag := infos[0]
+				urlArr := strings.Split(infos[1], ",")
+
+				if len(tagsRsUrlArr[tag]) > 0 {
+					tagsRsUrlArr[tag] = append(tagsRsUrlArr[tag], urlArr...)
+				} else {
+					tagsRsUrlArr[tag] = urlArr
+				}
+			}
+		}
 	}
-	return tagsUrlArr
+
+	for k, v := range tagsRsUrlArr {
+		sort.Strings(v)
+		tagsRsUrlArr[k] = uniq(v)
+	}
+	bArr := []string{}
+	n := time.Now().String()
+	for k, v := range tagsRsUrlArr {
+		rl := len(v)
+		if rl > 10 {
+			rl = 10
+		}
+		tmp := strings.Join(v[:rl], ",")
+		bArr = append(bArr, "('"+k+"', '"+ tmp+"', '0', '"+n+"', '"+n+"')")
+	}
+	openDb()
+	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
+	rs, err := db.Exec(sqlStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(rs)
+
+	defer db.Close()
 }

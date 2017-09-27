@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
+	//"strings"
 )
 
 var (
@@ -17,8 +17,6 @@ var (
 	fileName   = ""
 	tempRs     = "result"
 	tempExt    = ".atmp"
-	limit      bool
-	maxLength  int
 )
 
 type rsMapType map[string][]string
@@ -31,9 +29,7 @@ type siteInfo struct {
 type siteCtt []siteInfo
 
 // 日志处理入口
-func Process(path string, cwd string, name string, mLength int, lmt bool) {
-	limit = lmt
-	maxLength = mLength
+func Process(path string, cwd string, name string,) {
 	fileName = name
 	// 读取文件
 	readLine(path)
@@ -77,15 +73,9 @@ func makeMap(cwd string) {
 	for k, _ := range uniqUrlMap {
 		top := GetDomain(k)
 		host := top.host
-		scheme := top.scheme
-		replacedUrl := strings.Replace(k, host, "*", -1)
-		replacedUrl = strings.Replace(replacedUrl, scheme+"://", "", 1)
-		key := scheme + "@" + host
-		if (len(rsMap[key]) < maxLength) || !limit {
-			rsMap[key] = append(rsMap[key], replacedUrl)
-		}
+		rsMap[host] = append(rsMap[host], k)
 	}
-	MergeInfos(rsMap)
+	MergeInfos(cwd, rsMap)
 }
 
 // 日志分析

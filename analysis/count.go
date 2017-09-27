@@ -2,15 +2,15 @@ package analysis
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
+	"bytes"
+	"strconv"
+	"time"
 )
 
 type tType map[string]int
@@ -19,6 +19,7 @@ var (
 	tagRe    = regexp.MustCompile("\\[mip-tags used\\]")
 	pluginRe = regexp.MustCompile("\\[mip-tags used\\](http[s]?://\\S+): ([\\s\\S]*) log queue")
 	tagsMap  = tType{}
+	relReg   = regexp.MustCompile(`["|']`)
 )
 
 // 单行读取日志
@@ -35,29 +36,48 @@ func CountData(filePath string) {
 			break
 		}
 		tmpStr := string(a)
-		if tagRe.MatchString(tmpStr) {
+
+		if !relReg.MatchString(tmpStr) && tagRe.MatchString(tmpStr) {
 			analyTags(tmpStr)
 		}
 
 	}
 }
 
-func GetCountData(cwd string) tType {
+func GetCountData() {
+	var bf bytes.Buffer
+	bf.WriteString("UPDATE tags SET url_count = CASE tag_name")
+	for k, v := range tagsMap {
+		bf.WriteString(" WHEN '")
+		bf.WriteString(k)
+		bf.WriteString("' THEN ")
+		bf.WriteString(strconv.Itoa(v))
+	}
+	bf.WriteString(" END ")
+	bf.WriteString(` WHERE tags.ana_date = '`)
+	bf.WriteString(strings.Split(time.Now().String(), " ")[0])
+	bf.WriteString(`'`)
 
-	dir := ensureDir(cwd)
+	sqlStr := bf.String()
+	openDb()
 
-	b, err := json.Marshal(tagsMap)
+	/*
+	UPDATE categories
+	SET display_order = CASE id
+	WHEN 1 THEN 3
+	WHEN 2 THEN 4
+	WHEN 3 THEN 5
+	END
+	WHERE id IN (1,2,3)
+	*/
+
+	rs, err := db.Exec(sqlStr)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(rs)
 
-	finalPath := filepath.Join(dir, "count"+tempExt)
-	fmt.Printf("\nCount file in %v\n", finalPath)
-	if e := ioutil.WriteFile(finalPath, b, 0777); e != nil {
-		log.Fatal(e)
-	}
-
-	return tagsMap
+	defer db.Close()
 }
 
 func analyTags(c string) {
