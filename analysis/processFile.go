@@ -29,7 +29,7 @@ type siteInfo struct {
 type siteCtt []siteInfo
 
 // 日志处理入口
-func Process(path string, cwd string, name string,) {
+func Process(path string, cwd string, name string) {
 	fileName = name
 	// 读取文件
 	readLine(path)

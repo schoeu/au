@@ -71,9 +71,9 @@ func main() {
 	if anaType == 1 {
 		analysis.CalcuUniqInfo(tmpPath)
 	} else if anaType == 2 {
-		analysis.GetCountData()
+		analysis.GetCountData(tmpPath)
 	} else if anaType == 3 {
-		analysis.GetTagsMap()
+		analysis.GetTagsMap(tmpPath)
 	}
 }
 

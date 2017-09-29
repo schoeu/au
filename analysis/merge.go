@@ -1,26 +1,26 @@
 package analysis
 
 import (
-	"path/filepath"
-	"io/ioutil"
-	"strings"
-	"os"
 	"bufio"
-	"io"
-	"sort"
-	_ "github.com/go-sql-driver/mysql"
-	"database/sql"
-	"log"
-	"fmt"
-	"time"
-	"strconv"
 	"bytes"
+	"database/sql"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"io"
+	"io/ioutil"
+	"log"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
 )
 
 var (
 	tempDir = "./__au_temp__"
-	rsPath string
-	db *sql.DB
+	rsPath  string
+	db      *sql.DB
 )
 
 type uniqInfoType map[string][]string
@@ -35,12 +35,11 @@ func MergeInfos(cwd string, msg rsMapType) {
 		bf.WriteString(k)
 		bf.WriteString(" ")
 		bf.WriteString(strings.Join(v[:l], ","))
-		bf.WriteString(strings.Join(v[:l], "\n"))
+		bf.WriteString("\n")
 	}
 
 	rsPath = ensureDir(filepath.Join(cwd, tempDir))
-	os.RemoveAll(rsPath)
-	finalPath := filepath.Join(rsPath, fileName + tempExt)
+	finalPath := filepath.Join(rsPath, fileName+tempExt)
 	fmt.Printf("\nMerge file in %v\n", finalPath)
 	if e := ioutil.WriteFile(finalPath, []byte(bf.String()), 0777); e != nil {
 		log.Fatal(e)
@@ -89,6 +88,7 @@ func CalcuUniqInfo(cwd string) {
 	}
 	bArr := []string{}
 	n := time.Now().String()
+
 	for k, v := range t {
 		rl := len(v)
 		l := rl
@@ -98,7 +98,7 @@ func CalcuUniqInfo(cwd string) {
 
 		tmp := strings.Join(v[:rl], ",")
 
-		bArr = append(bArr, "('"+k+"', '"+ tmp+"', '"+ strconv.Itoa(l)   +"', '"+n+"', '"+n+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(l)+"', '"+getCurrentData()+"', '"+n+"')")
 	}
 
 	openDb(cwd)
@@ -112,12 +112,16 @@ func CalcuUniqInfo(cwd string) {
 	defer db.Close()
 }
 
+func getCurrentData() string {
+	t := time.Now().String()
+	return strings.Split(t, " ")[0]
+}
 
-func uniq(a []string) (ret []string){
+func uniq(a []string) (ret []string) {
 	a_len := len(a)
-	for i:=0; i < a_len; i++{
-		if (i > 0 && a[i-1] == a[i]) || len(a[i])==0{
-			continue;
+	for i := 0; i < a_len; i++ {
+		if (i > 0 && a[i-1] == a[i]) || len(a[i]) == 0 {
+			continue
 		}
 		ret = append(ret, a[i])
 	}
@@ -130,8 +134,8 @@ func openDb(cwd string) {
 		log.Fatal(err)
 	}
 
-	mDb, err := sql.Open("mysql",
-		string(config))
+	dbString := string(config)
+	mDb, err := sql.Open("mysql", dbString)
 	db = mDb
 
 	if err != nil {
@@ -139,7 +143,7 @@ func openDb(cwd string) {
 	}
 
 	err = db.Ping()
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 }

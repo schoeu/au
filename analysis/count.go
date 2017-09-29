@@ -2,14 +2,14 @@ package analysis
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"regexp"
-	"strings"
-	"bytes"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -44,7 +44,7 @@ func CountData(filePath string) {
 	}
 }
 
-func GetCountData() {
+func GetCountData(cwd string) {
 	var bf bytes.Buffer
 	bf.WriteString("UPDATE tags SET url_count = CASE tag_name")
 	for k, v := range tagsMap {
@@ -59,16 +59,16 @@ func GetCountData() {
 	bf.WriteString(`'`)
 
 	sqlStr := bf.String()
-	openDb()
+	openDb(cwd)
 
 	/*
-	UPDATE categories
-	SET display_order = CASE id
-	WHEN 1 THEN 3
-	WHEN 2 THEN 4
-	WHEN 3 THEN 5
-	END
-	WHERE id IN (1,2,3)
+		UPDATE categories
+		SET display_order = CASE id
+		WHEN 1 THEN 3
+		WHEN 2 THEN 4
+		WHEN 3 THEN 5
+		END
+		WHERE id IN (1,2,3)
 	*/
 
 	rs, err := db.Exec(sqlStr)

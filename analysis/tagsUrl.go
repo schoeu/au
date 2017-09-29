@@ -2,37 +2,36 @@ package analysis
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
-	"bytes"
-	"sort"
-	"time"
 	"regexp"
+	"sort"
+	"strings"
+	"time"
 )
 
 type tagsUrlType map[string][]string
 type rsType struct {
-	list []string
+	list  []string
 	count int
 }
 
-
 var (
-	tagsUrlArr    = tagsUrlType{}
-	tagsRsUrlArr    = tagsUrlType{}
-	tagTempDir = "./__au_tag_temp__"
-	tagRsPath string
-	tagRelReg   = regexp.MustCompile(`["|']`)
+	tagsUrlArr   = tagsUrlType{}
+	tagsRsUrlArr = tagsUrlType{}
+	tagTempDir   = "./__au_tag_temp__"
+	tagRsPath    string
+	tagRelReg    = regexp.MustCompile(`["|']`)
 )
 
 func TagsUrl(filePath string, cwd string, fileName string) {
-	tagsUrlArr    = tagsUrlType{}
-	tagsRsUrlArr    = tagsUrlType{}
+	tagsUrlArr = tagsUrlType{}
+	tagsRsUrlArr = tagsUrlType{}
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -63,8 +62,7 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 	}
 
 	tagRsPath = ensureDir(filepath.Join(cwd, tagTempDir))
-	os.RemoveAll(tagRsPath)
-	finalPath := filepath.Join(tagRsPath, fileName + tempExt)
+	finalPath := filepath.Join(tagRsPath, fileName+tempExt)
 	fmt.Printf("\nMerge file in %v\n", finalPath)
 	if e := ioutil.WriteFile(finalPath, []byte(buf.String()), 0777); e != nil {
 		log.Fatal(e)
@@ -84,7 +82,7 @@ func getTags(c string) {
 	}
 }
 
-func GetTagsMap() {
+func GetTagsMap(cwd string) {
 	files, err := ioutil.ReadDir(tagRsPath)
 	if err != nil {
 		log.Fatal(err)
@@ -123,16 +121,15 @@ func GetTagsMap() {
 		tagsRsUrlArr[k] = uniq(v)
 	}
 	bArr := []string{}
-	n := time.Now().String()
 	for k, v := range tagsRsUrlArr {
 		rl := len(v)
 		if rl > 10 {
 			rl = 10
 		}
 		tmp := strings.Join(v[:rl], ",")
-		bArr = append(bArr, "('"+k+"', '"+ tmp+"', '0', '"+n+"', '"+n+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+getCurrentData()+"', '"+time.Now().String()+"')")
 	}
-	openDb()
+	openDb(cwd)
 	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
 	rs, err := db.Exec(sqlStr)
 	if err != nil {
