@@ -46,7 +46,7 @@ func MergeInfos(cwd string, msg rsMapType) {
 	}
 }
 
-func CalcuUniqInfo(cwd string) {
+func CalcuUniqInfo(cwd string, anaDate string) {
 	t := uniqInfoType{}
 
 	files, err := ioutil.ReadDir(rsPath)
@@ -98,7 +98,7 @@ func CalcuUniqInfo(cwd string) {
 
 		tmp := strings.Join(v[:rl], ",")
 
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(l)+"', '"+getCurrentData()+"', '"+n+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(l)+"', '"+anaDate+"', '"+n+"')")
 	}
 
 	openDb(cwd)
@@ -110,11 +110,6 @@ func CalcuUniqInfo(cwd string) {
 	fmt.Println(rs)
 
 	defer db.Close()
-}
-
-func getCurrentData() string {
-	t := time.Now().String()
-	return strings.Split(t, " ")[0]
 }
 
 func uniq(a []string) (ret []string) {

@@ -10,12 +10,14 @@ import (
 	"path/filepath"
 	"regexp"
 	"time"
+	"strings"
 )
 
 var (
 	tempRs = "result"
 	// 需要分析的日志的类型
 	consoleTheme = "%c[0;32;40m%s%c[0m\n"
+	dateRe = regexp.MustCompile("mip_processor.log.(\\d{4}-\\d{2}-\\d{2})")
 	fileSize     int64
 	anaType      int
 	anaPath      string
@@ -26,6 +28,7 @@ var (
 	// 一个站点最多保存多个少url
 	maxLength int
 	logFileRe *regexp.Regexp
+	anaDate string
 )
 
 // 主函数
@@ -68,12 +71,17 @@ func main() {
 	during := time.Since(start)
 
 	fmt.Printf("File size is %v MB, cost %v", fileSize/1048576, during)
+
+	if anaDate == "" {
+		anaDate = getCurrentData()
+	}
+
 	if anaType == 1 {
-		analysis.CalcuUniqInfo(tmpPath)
+		analysis.CalcuUniqInfo(tmpPath, anaDate)
 	} else if anaType == 2 {
-		analysis.GetCountData(tmpPath)
+		analysis.GetTagsMap(tmpPath, anaDate)
 	} else if anaType == 3 {
-		analysis.GetTagsMap(tmpPath)
+		analysis.GetCountData(tmpPath)
 	}
 }
 
@@ -86,6 +94,14 @@ func readDir(path string, cwd string) {
 
 	for _, file := range files {
 		fileName := file.Name()
+
+		if anaDate == "" {
+			anaDateArr := dateRe.FindAllStringSubmatch(fileName, -1)
+			if len(anaDateArr[0]) > 1 {
+				anaDate = anaDateArr[0][1]
+			}
+		}
+
 		if logFileRe.MatchString(fileName) {
 			fileSize += file.Size()
 			fmt.Printf(consoleTheme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
@@ -117,4 +133,9 @@ func cleanTmp(dir string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getCurrentData() string {
+	t := time.Now().String()
+	return strings.Split(t, " ")[0]
 }

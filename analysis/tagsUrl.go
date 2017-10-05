@@ -82,7 +82,7 @@ func getTags(c string) {
 	}
 }
 
-func GetTagsMap(cwd string) {
+func GetTagsMap(cwd string, anaDate string) {
 	files, err := ioutil.ReadDir(tagRsPath)
 	if err != nil {
 		log.Fatal(err)
@@ -127,7 +127,7 @@ func GetTagsMap(cwd string) {
 			rl = 10
 		}
 		tmp := strings.Join(v[:rl], ",")
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+getCurrentData()+"', '"+time.Now().String()+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+anaDate+"', '"+time.Now().String()+"')")
 	}
 	openDb(cwd)
 	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
