@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,6 +29,8 @@ var (
 	tagRsPath    string
 	tagRelReg    = regexp.MustCompile(`["|']`)
 )
+
+const tagMax = 10
 
 func TagsUrl(filePath string, cwd string, fileName string) {
 	tagsUrlArr = tagsUrlType{}
@@ -53,11 +56,18 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 	for k, v := range tagsUrlArr {
 		buf.WriteString(k)
 		buf.WriteString(" ")
+		b, uDArr := getDiffUrls(v)
 		l := len(v)
-		if l > 10 {
-			l = 10
+		if l > tagMax {
+			l = tagMax
 		}
-		buf.WriteString(strings.Join(v[:l], ","))
+
+		buf.WriteString(strings.Join(b[:l], ","))
+		buf.WriteString(" ")
+
+		for key, val := range uDArr {
+			buf.WriteString("," + key + "=" + strconv.Itoa(val))
+		}
 		buf.WriteString("\n")
 	}
 
@@ -67,6 +77,23 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 	if e := ioutil.WriteFile(finalPath, []byte(buf.String()), 0777); e != nil {
 		log.Fatal(e)
 	}
+}
+
+func getDiffUrls(val []string) ([]string, map[string]int) {
+	var uniqUrlArr []string
+	normalArr := []string{}
+	uniqDomainArr := map[string]int{}
+	for _, v := range val {
+		d := GetDomain(v).host
+		if uniqDomainArr[d] == 0 && len(uniqUrlArr) <= tagMax {
+			uniqUrlArr = append(uniqUrlArr, v)
+		} else {
+			normalArr = append(normalArr, v)
+		}
+		uniqDomainArr[d] += 1
+	}
+	a := append(uniqUrlArr, normalArr...)
+	return a, uniqDomainArr
 }
 
 func getTags(c string) {
@@ -83,6 +110,7 @@ func getTags(c string) {
 }
 
 func GetTagsMap(cwd string, anaDate string) {
+	tagCountCtt := map[string]string{}
 	files, err := ioutil.ReadDir(tagRsPath)
 	if err != nil {
 		log.Fatal(err)
@@ -101,12 +129,14 @@ func GetTagsMap(cwd string, anaDate string) {
 			if c == io.EOF {
 				break
 			}
-			content := string(a)
-			infos := strings.Split(content, " ")
-			if len(infos) > 1 {
-				tag := infos[0]
-				urlArr := strings.Split(infos[1], ",")
+			// content := string(a)
+			infos := bytes.Split(a, []byte(" "))
 
+			if len(infos) > 2 {
+				tag := string(infos[0])
+				urlArr := strings.Split(string(infos[1]), ",")
+				tagC := infos[2][1:]
+				tagCountCtt[tag] = string(tagC)
 				if len(tagsRsUrlArr[tag]) > 0 {
 					tagsRsUrlArr[tag] = append(tagsRsUrlArr[tag], urlArr...)
 				} else {
@@ -115,6 +145,8 @@ func GetTagsMap(cwd string, anaDate string) {
 			}
 		}
 	}
+
+	tagTypeInfo := GetTagType(cwd)
 
 	for k, v := range tagsRsUrlArr {
 		sort.Strings(v)
@@ -127,15 +159,14 @@ func GetTagsMap(cwd string, anaDate string) {
 			rl = 10
 		}
 		tmp := strings.Join(v[:rl], ",")
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+anaDate+"', '"+time.Now().String()+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+tagCountCtt[k]+"','" + strconv.Itoa(tagTypeInfo[k]) +"','"+anaDate+"', '"+time.Now().String()+"')")
 	}
 	openDb(cwd)
-	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
+	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, tag_count,tag_type, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
 	rs, err := db.Exec(sqlStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println(rs)
-
 	defer db.Close()
 }

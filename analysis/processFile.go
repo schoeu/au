@@ -60,6 +60,10 @@ func readLine(filePath string) {
 // 创建临时文件夹存放中间文件
 func ensureDir(cwd string) string {
 	dirPath := filepath.Join(cwd, tempRs)
+	err := os.RemoveAll(dirPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 	mkDirErr := os.MkdirAll(dirPath, 0777)
 	if mkDirErr != nil {
 		log.Fatal(mkDirErr)

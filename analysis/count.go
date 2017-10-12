@@ -10,7 +10,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type tType map[string]int
@@ -44,7 +43,7 @@ func CountData(filePath string) {
 	}
 }
 
-func GetCountData(cwd string) {
+func GetCountData(cwd string, anaDate string) {
 	var bf bytes.Buffer
 	bf.WriteString("UPDATE tags SET url_count = CASE tag_name")
 	for k, v := range tagsMap {
@@ -52,10 +51,11 @@ func GetCountData(cwd string) {
 		bf.WriteString(k)
 		bf.WriteString("' THEN ")
 		bf.WriteString(strconv.Itoa(v))
+
 	}
 	bf.WriteString(" END ")
 	bf.WriteString(` WHERE tags.ana_date = '`)
-	bf.WriteString(strings.Split(time.Now().String(), " ")[0])
+	bf.WriteString(anaDate)
 	bf.WriteString(`'`)
 
 	sqlStr := bf.String()

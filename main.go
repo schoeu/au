@@ -9,26 +9,25 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"time"
 	"strings"
+	"time"
 )
 
 var (
 	tempRs = "result"
 	// 需要分析的日志的类型
 	consoleTheme = "%c[0;32;40m%s%c[0m\n"
-	dateRe = regexp.MustCompile("mip_processor.log.(\\d{4}-\\d{2}-\\d{2})")
+	dateRe       = regexp.MustCompile("mip_processor.log.(\\d{4}-\\d{2}-\\d{2})")
 	fileSize     int64
 	anaType      int
 	anaPath      string
 	anaHelper    string
 	helpInfo     string
 	pattern      string
-	limit        bool
 	// 一个站点最多保存多个少url
 	maxLength int
 	logFileRe *regexp.Regexp
-	anaDate string
+	anaDate   string
 )
 
 // 主函数
@@ -42,7 +41,6 @@ func main() {
 	flag.StringVar(&anaPath, "path", "", "需要分析的日志文件夹的绝对路径")
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
-	flag.BoolVar(&limit, "limit", true, "是否限制取默认条数")
 	flag.IntVar(&maxLength, "maxLength", 10, "制取默认条数")
 
 	// 获取临时路径
@@ -70,7 +68,7 @@ func main() {
 
 	during := time.Since(start)
 
-	fmt.Printf("File size is %v MB, cost %v", fileSize/1048576, during)
+	fmt.Printf("File size is %v MB, cost %v\n", fileSize/1048576, during)
 
 	if anaDate == "" {
 		anaDate = getCurrentData()
@@ -81,7 +79,7 @@ func main() {
 	} else if anaType == 2 {
 		analysis.GetTagsMap(tmpPath, anaDate)
 	} else if anaType == 3 {
-		analysis.GetCountData(tmpPath)
+		analysis.GetCountData(tmpPath, anaDate)
 	}
 }
 
@@ -94,24 +92,23 @@ func readDir(path string, cwd string) {
 
 	for _, file := range files {
 		fileName := file.Name()
-
-		if anaDate == "" {
-			anaDateArr := dateRe.FindAllStringSubmatch(fileName, -1)
-			if len(anaDateArr[0]) > 1 {
-				anaDate = anaDateArr[0][1]
-			}
-		}
-
 		if logFileRe.MatchString(fileName) {
+			if anaDate == "" {
+				anaDateArr := dateRe.FindAllStringSubmatch(fileName, -1)
+				if len(anaDateArr[0]) > 1 {
+					anaDate = anaDateArr[0][1]
+				}
+			}
+
 			fileSize += file.Size()
 			fmt.Printf(consoleTheme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
 			if anaType == 1 {
 				analysis.Process(fullPath, cwd, fileName)
 			} else if anaType == 2 {
-				analysis.CountData(fullPath)
-			} else if anaType == 3 {
 				analysis.TagsUrl(fullPath, cwd, fileName)
+			} else if anaType == 3 {
+				analysis.CountData(fullPath)
 			}
 		}
 	}

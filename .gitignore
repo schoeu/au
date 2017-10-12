@@ -19,4 +19,5 @@ bin
 result
 .DS_Store
 __*
-config
+*config
+taglist

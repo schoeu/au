@@ -17,24 +17,32 @@ import (
 	"time"
 )
 
+type mit map[string]int
+
 var (
 	tempDir = "./__au_temp__"
 	rsPath  string
 	db      *sql.DB
+	m       = mit{}
 )
 
 type uniqInfoType map[string][]string
 
 func MergeInfos(cwd string, msg rsMapType) {
 	var bf bytes.Buffer
+	m = mit{}
 	for k, v := range msg {
 		l := len(v)
+		m[k] = m[k] + l
 		if l > 10 {
 			l = 10
 		}
+
 		bf.WriteString(k)
 		bf.WriteString(" ")
 		bf.WriteString(strings.Join(v[:l], ","))
+		bf.WriteString(" ")
+		bf.WriteString(strconv.Itoa(l))
 		bf.WriteString("\n")
 	}
 
@@ -48,7 +56,6 @@ func MergeInfos(cwd string, msg rsMapType) {
 
 func CalcuUniqInfo(cwd string, anaDate string) {
 	t := uniqInfoType{}
-
 	files, err := ioutil.ReadDir(rsPath)
 	if err != nil {
 		log.Fatal(err)
@@ -91,22 +98,25 @@ func CalcuUniqInfo(cwd string, anaDate string) {
 
 	for k, v := range t {
 		rl := len(v)
-		l := rl
 		if rl > 10 {
 			rl = 10
 		}
 
 		tmp := strings.Join(v[:rl], ",")
 
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(l)+"', '"+anaDate+"', '"+n+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(m[k])+"', '"+anaDate+"', '"+n+"')")
 	}
+
+	fmt.Println(m)
 
 	openDb(cwd)
 	sqlStr := "INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
 	rs, err := db.Exec(sqlStr)
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	fmt.Println(rs)
 
 	defer db.Close()
@@ -124,14 +134,11 @@ func uniq(a []string) (ret []string) {
 }
 
 func openDb(cwd string) {
-	config, err := ioutil.ReadFile(filepath.Join(cwd, "config"))
-	if err != nil {
-		log.Fatal(err)
-	}
+	dbString := "path/to/db"
 
-	dbString := string(config)
 	mDb, err := sql.Open("mysql", dbString)
 	db = mDb
+	fmt.Println(mDb)
 
 	if err != nil {
 		log.Fatal(err)
