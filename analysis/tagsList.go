@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func GetTagType(cwd string) map[string]int{
+func GetTagType(cwd string) map[string]int {
 	typeCt := map[string]int{}
 	tagListArr := strings.Split(TagsList, "\n")
 	for k, v := range tagListArr {

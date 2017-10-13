@@ -34,7 +34,6 @@ func Process(path string, cwd string, name string) {
 	// 读取文件
 	readLine(path)
 	makeMap(cwd)
-
 }
 
 // 单行读取日志
