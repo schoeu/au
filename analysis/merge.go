@@ -1,6 +1,7 @@
 package analysis
 
 import (
+	"../config"
 	"bufio"
 	"bytes"
 	"database/sql"
@@ -134,9 +135,7 @@ func uniq(a []string) (ret []string) {
 }
 
 func openDb(cwd string) {
-	dbString := "path/to/db"
-
-	mDb, err := sql.Open("mysql", dbString)
+	mDb, err := sql.Open("mysql", config.DbConfig)
 	db = mDb
 	fmt.Println(mDb)
 

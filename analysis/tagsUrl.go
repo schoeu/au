@@ -22,6 +22,10 @@ type rsType struct {
 	count int
 }
 
+type tagCountInfo struct {
+
+}
+
 var (
 	tagsUrlArr   = tagsUrlType{}
 	tagsRsUrlArr = tagsUrlType{}
@@ -131,7 +135,6 @@ func GetTagsMap(cwd string, anaDate string) {
 			}
 			// content := string(a)
 			infos := bytes.Split(a, []byte(" "))
-
 			if len(infos) > 2 {
 				tag := string(infos[0])
 				urlArr := strings.Split(string(infos[1]), ",")
@@ -148,6 +151,10 @@ func GetTagsMap(cwd string, anaDate string) {
 
 	tagTypeInfo := GetTagType(cwd)
 
+	jst := len(tagTypeInfo)
+	fmt.Println(jst)
+
+
 	for k, v := range tagsRsUrlArr {
 		sort.Strings(v)
 		tagsRsUrlArr[k] = uniq(v)
@@ -159,10 +166,13 @@ func GetTagsMap(cwd string, anaDate string) {
 			rl = 10
 		}
 		tmp := strings.Join(v[:rl], ",")
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+tagCountCtt[k]+"','" + strconv.Itoa(tagTypeInfo[k]) +"','"+anaDate+"', '"+time.Now().String()+"')")
+
+		tagCountStr := tagCountCtt[k]
+		tagCountNum := strings.Split(tagCountStr, ",")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','" + strconv.Itoa(tagTypeInfo[k]) +"','"+ strconv.Itoa(len(tagCountNum)) +"','"+anaDate+"', '"+time.Now().String()+"')")
 	}
 	openDb(cwd)
-	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, tag_count,tag_type, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
+	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, tag_count, tag_type, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
 	rs, err := db.Exec(sqlStr)
 	if err != nil {
 		log.Fatal(err)

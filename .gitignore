@@ -20,4 +20,5 @@ result
 .DS_Store
 __*
 *config
-taglist
+taglist.go
+conf.go
