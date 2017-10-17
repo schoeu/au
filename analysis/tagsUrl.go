@@ -53,7 +53,7 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 
 	var buf bytes.Buffer
 	for k, v := range tagsUrlArr {
-
+		// 过滤空tag
 		if k == "" {
 			continue
 		}
@@ -167,8 +167,7 @@ func GetTagsMap(cwd string, anaDate string) {
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','"+strconv.Itoa(tagTypeInfo[k])+"','"+strconv.Itoa(len(tagCountNum))+"','"+anaDate+"', '"+time.Now().String()+"')")
 	}
 	openDb(cwd)
-	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, tag_count, tag_type, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
-	_, err = db.Exec(sqlStr)
+	_, err = db.Exec("INSERT INTO tags (tag_name, urls, url_count, tag_count, tag_type, domain_count, ana_date, edit_date) VALUES ?", strings.Join(bArr, ","))
 	if err != nil {
 		log.Fatal(err)
 	}

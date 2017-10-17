@@ -107,8 +107,7 @@ func CalcuUniqInfo(cwd string, anaDate string) {
 	}
 
 	openDb(cwd)
-	sqlStr := "INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
-	_, err = db.Exec(sqlStr)
+	_, err = db.Exec("INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES ?", strings.Join(bArr, ","))
 
 	if err != nil {
 		log.Fatal(err)
