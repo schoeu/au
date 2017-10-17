@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"bytes"
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"io/ioutil"
@@ -49,7 +48,6 @@ func MergeInfos(cwd string, msg rsMapType) {
 
 	rsPath = ensureDir(filepath.Join(cwd, tempDir))
 	finalPath := filepath.Join(rsPath, fileName+tempExt)
-	fmt.Printf("\nMerge file in %v\n", finalPath)
 	if e := ioutil.WriteFile(finalPath, []byte(bf.String()), 0777); e != nil {
 		log.Fatal(e)
 	}
@@ -108,17 +106,13 @@ func CalcuUniqInfo(cwd string, anaDate string) {
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(m[k])+"', '"+anaDate+"', '"+n+"')")
 	}
 
-	fmt.Println(m)
-
 	openDb(cwd)
 	sqlStr := "INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
-	rs, err := db.Exec(sqlStr)
+	_, err = db.Exec(sqlStr)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(rs)
 
 	defer db.Close()
 }
@@ -137,8 +131,6 @@ func uniq(a []string) (ret []string) {
 func openDb(cwd string) {
 	mDb, err := sql.Open("mysql", config.DbConfig)
 	db = mDb
-	fmt.Println(mDb)
-
 	if err != nil {
 		log.Fatal(err)
 	}

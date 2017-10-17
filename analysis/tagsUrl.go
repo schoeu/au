@@ -3,7 +3,6 @@ package analysis
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -54,6 +53,11 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 
 	var buf bytes.Buffer
 	for k, v := range tagsUrlArr {
+
+		if k == "" {
+			continue
+		}
+
 		buf.WriteString(k)
 		buf.WriteString(" ")
 		b, uDArr := getDiffUrls(v)
@@ -73,7 +77,6 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 
 	tagRsPath = ensureDir(filepath.Join(cwd, tagTempDir))
 	finalPath := filepath.Join(tagRsPath, fileName+tempExt)
-	fmt.Printf("\nMerge file in %v\n", finalPath)
 	if e := ioutil.WriteFile(finalPath, []byte(buf.String()), 0777); e != nil {
 		log.Fatal(e)
 	}
@@ -147,9 +150,6 @@ func GetTagsMap(cwd string, anaDate string) {
 
 	tagTypeInfo := GetTagType(cwd)
 
-	jst := len(tagTypeInfo)
-	fmt.Println(jst)
-
 	for k, v := range tagsRsUrlArr {
 		sort.Strings(v)
 		tagsRsUrlArr[k] = uniq(v)
@@ -168,10 +168,9 @@ func GetTagsMap(cwd string, anaDate string) {
 	}
 	openDb(cwd)
 	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, tag_count, tag_type, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
-	rs, err := db.Exec(sqlStr)
+	_, err = db.Exec(sqlStr)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(rs)
 	defer db.Close()
 }

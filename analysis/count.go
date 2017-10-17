@@ -3,7 +3,6 @@ package analysis
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -71,12 +70,10 @@ func GetCountData(cwd string, anaDate string) {
 		WHERE id IN (1,2,3)
 	*/
 
-	rs, err := db.Exec(sqlStr)
+	_, err := db.Exec(sqlStr)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(rs)
-
 	defer db.Close()
 }
 
