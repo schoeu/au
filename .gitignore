@@ -19,6 +19,4 @@ bin
 result
 .DS_Store
 __*
-*config
-taglist.go
-conf.go
+config
