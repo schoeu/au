@@ -1,10 +1,10 @@
 package analysis
 
 import (
+	"../autils"
 	"bufio"
 	"bytes"
 	"io"
-	"log"
 	"os"
 	"regexp"
 	"strconv"
@@ -23,9 +23,7 @@ var (
 // 单行读取日志
 func CountData(filePath string) {
 	fi, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	autils.ErrHadle(err)
 	defer fi.Close()
 	br := bufio.NewReader(fi)
 	for {
@@ -58,7 +56,7 @@ func GetCountData(cwd string, anaDate string) {
 	bf.WriteString(`'`)
 
 	sqlStr := bf.String()
-	openDb(cwd)
+	db := autils.OpenDb(cwd)
 
 	/*
 		UPDATE categories
@@ -71,9 +69,7 @@ func GetCountData(cwd string, anaDate string) {
 	*/
 
 	_, err := db.Exec(sqlStr)
-	if err != nil {
-		log.Fatal(err)
-	}
+	autils.ErrHadle(err)
 	defer db.Close()
 }
 

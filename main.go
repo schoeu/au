@@ -99,9 +99,8 @@ func readDir(path string, cwd string) {
 					anaDate = anaDateArr[0][1]
 				}
 			}
-
+			fmt.Printf(consoleTheme, 0x1B, "process [ "+file.Name()+" ] done!", 0x1B)
 			fileSize += file.Size()
-			fmt.Printf(consoleTheme, 0x1B, "process[ "+file.Name()+" ]done!", 0x1B)
 			fullPath := filepath.Join(path, fileName)
 			if anaType == 1 {
 				analysis.Process(fullPath, cwd, fileName)

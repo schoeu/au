@@ -1,11 +1,11 @@
 package analysis
 
 import (
+	"../autils"
 	"bufio"
 	"bytes"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -35,9 +35,7 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 	tagsUrlArr = tagsUrlType{}
 	tagsRsUrlArr = tagsUrlType{}
 	fi, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	autils.ErrHadle(err)
 	defer fi.Close()
 	br := bufio.NewReader(fi)
 	for {
@@ -75,11 +73,10 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 		buf.WriteString("\n")
 	}
 
-	tagRsPath = ensureDir(filepath.Join(cwd, tagTempDir))
+	tagRsPath = autils.EnsureDir(filepath.Join(cwd, tagTempDir))
 	finalPath := filepath.Join(tagRsPath, fileName+tempExt)
-	if e := ioutil.WriteFile(finalPath, []byte(buf.String()), 0777); e != nil {
-		log.Fatal(e)
-	}
+	err = ioutil.WriteFile(finalPath, []byte(buf.String()), 0777)
+	autils.ErrHadle(err)
 }
 
 func getDiffUrls(val []string) ([]string, map[string]int) {
@@ -115,16 +112,11 @@ func getTags(c string) {
 func GetTagsMap(cwd string, anaDate string) {
 	tagCountCtt := map[string]string{}
 	files, err := ioutil.ReadDir(tagRsPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	autils.ErrHadle(err)
 
 	for _, file := range files {
 		fi, err := os.Open(filepath.Join(tagRsPath, file.Name()))
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
+		autils.ErrHadle(err)
 		defer fi.Close()
 		br := bufio.NewReader(fi)
 		for {
@@ -166,10 +158,9 @@ func GetTagsMap(cwd string, anaDate string) {
 		tagCountNum := strings.Split(tagCountStr, ",")
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','"+strconv.Itoa(tagTypeInfo[k])+"','"+strconv.Itoa(len(tagCountNum))+"','"+anaDate+"', '"+time.Now().String()+"')")
 	}
-	openDb(cwd)
-	_, err = db.Exec("INSERT INTO tags (tag_name, urls, url_count, tag_count, tag_type, domain_count, ana_date, edit_date) VALUES ?", strings.Join(bArr, ","))
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := autils.OpenDb(cwd)
+	autils.ErrHadle(err)
+	_, err = db.Exec("INSERT INTO tags (tag_name, urls, url_count, tag_count, tag_type, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ","))
+	autils.ErrHadle(err)
 	defer db.Close()
 }

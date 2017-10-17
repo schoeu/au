@@ -1,11 +1,9 @@
 package analysis
 
 import (
-	"../config"
+	"../autils"
 	"bufio"
 	"bytes"
-	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"io"
 	"io/ioutil"
 	"log"
@@ -22,7 +20,6 @@ type mit map[string]int
 var (
 	tempDir = "./__au_temp__"
 	rsPath  string
-	db      *sql.DB
 	m       = mit{}
 )
 
@@ -46,7 +43,7 @@ func MergeInfos(cwd string, msg rsMapType) {
 		bf.WriteString("\n")
 	}
 
-	rsPath = ensureDir(filepath.Join(cwd, tempDir))
+	rsPath = autils.EnsureDir(filepath.Join(cwd, tempDir))
 	finalPath := filepath.Join(rsPath, fileName+tempExt)
 	if e := ioutil.WriteFile(finalPath, []byte(bf.String()), 0777); e != nil {
 		log.Fatal(e)
@@ -56,16 +53,11 @@ func MergeInfos(cwd string, msg rsMapType) {
 func CalcuUniqInfo(cwd string, anaDate string) {
 	t := uniqInfoType{}
 	files, err := ioutil.ReadDir(rsPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	autils.ErrHadle(err)
 
 	for _, file := range files {
 		fi, err := os.Open(filepath.Join(rsPath, file.Name()))
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
+		autils.ErrHadle(err)
 		defer fi.Close()
 		br := bufio.NewReader(fi)
 		for {
@@ -106,12 +98,12 @@ func CalcuUniqInfo(cwd string, anaDate string) {
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(m[k])+"', '"+anaDate+"', '"+n+"')")
 	}
 
-	openDb(cwd)
-	_, err = db.Exec("INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES ?", strings.Join(bArr, ","))
+	db := autils.OpenDb(cwd)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	sqlStr := "INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
+	_, err = db.Exec(sqlStr)
+
+	autils.ErrHadle(err)
 
 	defer db.Close()
 }
@@ -125,17 +117,4 @@ func uniq(a []string) (ret []string) {
 		ret = append(ret, a[i])
 	}
 	return
-}
-
-func openDb(cwd string) {
-	mDb, err := sql.Open("mysql", config.DbConfig)
-	db = mDb
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
 }

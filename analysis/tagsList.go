@@ -1,12 +1,13 @@
 package analysis
 
 import (
+	"../config"
 	"strings"
 )
 
 func GetTagType(cwd string) map[string]int {
 	typeCt := map[string]int{}
-	tagListArr := strings.Split(TagsList, "\n")
+	tagListArr := strings.Split(config.TagsList, "\n")
 	for k, v := range tagListArr {
 		infos := strings.Split(string(v), ",")
 		for _, v := range infos {

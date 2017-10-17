@@ -1,13 +1,12 @@
 package analysis
 
 import (
+	"../autils"
 	"bufio"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
-	//"strings"
 )
 
 var (
@@ -15,7 +14,6 @@ var (
 	ignorExts  = [4]string{".jpg", ".png", ".gif", ".jpeg"}
 	uniqUrlMap = map[string]int{}
 	fileName   = ""
-	tempRs     = "result"
 	tempExt    = ".atmp"
 )
 
@@ -40,10 +38,7 @@ func Process(path string, cwd string, name string) {
 func readLine(filePath string) {
 	uniqUrlMap = map[string]int{}
 	fi, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
+	autils.ErrHadle(err)
 	defer fi.Close()
 	br := bufio.NewReader(fi)
 	for {
@@ -54,20 +49,6 @@ func readLine(filePath string) {
 		content := string(a)
 		analysisFile(content)
 	}
-}
-
-// 创建临时文件夹存放中间文件
-func ensureDir(cwd string) string {
-	dirPath := filepath.Join(cwd, tempRs)
-	err := os.RemoveAll(dirPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	mkDirErr := os.MkdirAll(dirPath, 0777)
-	if mkDirErr != nil {
-		log.Fatal(mkDirErr)
-	}
-	return dirPath
 }
 
 // 信息保存到strict中
