@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -67,12 +68,12 @@ func analysisFile(content string) {
 	rs := re.FindAllStringSubmatch(content, -1)
 	url := rs[0][0]
 	crtExt := filepath.Ext(url)
-
+	rsUrl := strings.Replace(url, "'", "\\'", -1)
 	for _, v := range ignorExts {
 		if v == crtExt {
 			return
 		}
 	}
 
-	uniqUrlMap[url] = 1
+	uniqUrlMap[rsUrl] = 1
 }
