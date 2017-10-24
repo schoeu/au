@@ -24,8 +24,6 @@ var (
 	anaHelper    string
 	helpInfo     string
 	pattern      string
-	// 一个站点最多保存多个少url
-	maxLength int
 	logFileRe *regexp.Regexp
 	anaDate   string
 )
@@ -41,7 +39,6 @@ func main() {
 	flag.StringVar(&anaPath, "path", "", "需要分析的日志文件夹的绝对路径")
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
-	flag.IntVar(&maxLength, "maxLength", 10, "制取默认条数")
 
 	// 获取临时路径
 	tmpPath := getCwd()
