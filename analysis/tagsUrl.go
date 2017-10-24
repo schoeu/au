@@ -29,8 +29,10 @@ var (
 	tagRelReg    = regexp.MustCompile(`["|']`)
 )
 
+// 保存数据只保留前十条
 const tagMax = 10
 
+// 组件信息处理入口
 func TagsUrl(filePath string, cwd string, fileName string) {
 	tagsUrlArr = tagsUrlType{}
 	tagsRsUrlArr = tagsUrlType{}
@@ -79,6 +81,7 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 	autils.ErrHadle(err)
 }
 
+// 组件信息去重
 func getDiffUrls(val []string) ([]string, map[string]int) {
 	var uniqUrlArr []string
 	normalArr := []string{}
@@ -96,6 +99,7 @@ func getDiffUrls(val []string) ([]string, map[string]int) {
 	return a, uniqDomainArr
 }
 
+// 获取组件信息
 func getTags(c string) {
 	tagsInfo := pluginRe.FindAllStringSubmatch(c, -1)
 	if len(tagsInfo) > 0 && len(tagsInfo[0]) > 1 {
@@ -109,6 +113,7 @@ func getTags(c string) {
 	}
 }
 
+// 组件组件信息，写入数据库
 func GetTagsMap(cwd string, anaDate string) {
 	tagCountCtt := map[string]string{}
 	files, err := ioutil.ReadDir(tagRsPath)

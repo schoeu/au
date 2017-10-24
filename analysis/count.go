@@ -40,6 +40,7 @@ func CountData(filePath string) {
 	}
 }
 
+// 更新组件引用数信息
 func GetCountData(cwd string, anaDate string) {
 	var bf bytes.Buffer
 	bf.WriteString("UPDATE tags SET url_count = CASE tag_name")
@@ -73,6 +74,7 @@ func GetCountData(cwd string, anaDate string) {
 	defer db.Close()
 }
 
+// 组件分析
 func analyTags(c string) {
 	tagsInfo := pluginRe.FindAllStringSubmatch(c, -1)
 	if len(tagsInfo) > 0 && len(tagsInfo[0]) > 1 {

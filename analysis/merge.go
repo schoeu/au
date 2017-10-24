@@ -18,6 +18,7 @@ import (
 type mit map[string]int
 
 var (
+	// 中间文件前缀
 	tempDir = "./__au_temp__"
 	rsPath  string
 	m       = mit{}
@@ -25,6 +26,7 @@ var (
 
 type uniqInfoType map[string][]string
 
+// 域名数据处理入口
 func MergeInfos(cwd string, msg rsMapType) {
 	var bf bytes.Buffer
 	m = mit{}
@@ -50,6 +52,7 @@ func MergeInfos(cwd string, msg rsMapType) {
 	}
 }
 
+// 域名数据写入数据库
 func CalcuUniqInfo(cwd string, anaDate string) {
 	t := uniqInfoType{}
 	files, err := ioutil.ReadDir(rsPath)
@@ -108,6 +111,7 @@ func CalcuUniqInfo(cwd string, anaDate string) {
 	defer db.Close()
 }
 
+// []string数据去重
 func uniq(a []string) (ret []string) {
 	a_len := len(a)
 	for i := 0; i < a_len; i++ {

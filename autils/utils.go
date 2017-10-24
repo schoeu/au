@@ -11,12 +11,14 @@ import (
 
 var tempRs = "result"
 
+// 统一错误处理
 func ErrHadle(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
+// 创建数据库链接
 func OpenDb(cwd string) *sql.DB {
 	db, err := sql.Open("mysql", config.DbConfig)
 	ErrHadle(err)

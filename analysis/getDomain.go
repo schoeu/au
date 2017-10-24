@@ -23,6 +23,7 @@ type urlInfos struct {
 	scheme string
 }
 
+// 获取域名主域
 func GetDomain(l string) urlInfos {
 
 	uInfo := urlInfos{}

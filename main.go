@@ -131,6 +131,7 @@ func cleanTmp(dir string) {
 	}
 }
 
+// 获取当前日期字符串
 func getCurrentData() string {
 	t := time.Now().String()
 	return strings.Split(t, " ")[0]
