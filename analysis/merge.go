@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"../autils"
+	"../config"
 	"bufio"
 	"bytes"
 	"io"
@@ -18,10 +19,8 @@ import (
 type mit map[string]int
 
 var (
-	// 中间文件前缀
-	tempDir = "./__au_temp__"
-	rsPath  string
-	m       = mit{}
+	rsPath string
+	m      = mit{}
 )
 
 type uniqInfoType map[string][]string
@@ -45,7 +44,7 @@ func MergeInfos(cwd string, msg rsMapType) {
 		bf.WriteString("\n")
 	}
 
-	rsPath = autils.EnsureDir(filepath.Join(cwd, tempDir))
+	rsPath = autils.EnsureDir(filepath.Join(cwd, config.TempDir))
 	finalPath := filepath.Join(rsPath, fileName+tempExt)
 	if e := ioutil.WriteFile(finalPath, []byte(bf.String()), 0777); e != nil {
 		log.Fatal(e)

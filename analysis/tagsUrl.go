@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"../autils"
+	"../config"
 	"bufio"
 	"bytes"
 	"io"
@@ -24,7 +25,6 @@ type rsType struct {
 var (
 	tagsUrlArr   = tagsUrlType{}
 	tagsRsUrlArr = tagsUrlType{}
-	tagTempDir   = "./__au_tag_temp__"
 	tagRsPath    string
 	tagRelReg    = regexp.MustCompile(`["|']`)
 )
@@ -32,7 +32,7 @@ var (
 // 保存数据只保留前十条
 const tagMax = 10
 
-// 组件信息处理入口
+// 单小时组件信息处理入口
 func TagsUrl(filePath string, cwd string, fileName string) {
 	tagsUrlArr = tagsUrlType{}
 	tagsRsUrlArr = tagsUrlType{}
@@ -75,7 +75,7 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 		buf.WriteString("\n")
 	}
 
-	tagRsPath = autils.EnsureDir(filepath.Join(cwd, tagTempDir))
+	tagRsPath = autils.EnsureDir(filepath.Join(cwd, config.TagTempDir))
 	finalPath := filepath.Join(tagRsPath, fileName+tempExt)
 	err = ioutil.WriteFile(finalPath, []byte(buf.String()), 0777)
 	autils.ErrHadle(err)
@@ -118,7 +118,6 @@ func GetTagsMap(cwd string, anaDate string) {
 	tagCountCtt := map[string]string{}
 	files, err := ioutil.ReadDir(tagRsPath)
 	autils.ErrHadle(err)
-
 	for _, file := range files {
 		fi, err := os.Open(filepath.Join(tagRsPath, file.Name()))
 		autils.ErrHadle(err)
@@ -129,7 +128,6 @@ func GetTagsMap(cwd string, anaDate string) {
 			if c == io.EOF {
 				break
 			}
-			// content := string(a)
 			infos := bytes.Split(a, []byte(" "))
 			if len(infos) > 2 {
 				tag := string(infos[0])
@@ -161,6 +159,7 @@ func GetTagsMap(cwd string, anaDate string) {
 		tagCountNum := strings.Split(tagCountStr, ",")
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','"+strconv.Itoa(len(tagCountNum))+"','"+anaDate+"', '"+time.Now().String()+"')")
 	}
+
 	db := autils.OpenDb(cwd)
 	autils.ErrHadle(err)
 	_, err = db.Exec("INSERT INTO tags (tag_name, urls, url_count, tag_count, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ","))

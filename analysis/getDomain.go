@@ -7,7 +7,7 @@ import (
 )
 
 var domainSuffix = []string{
-	".com.ag", ".org.tw", ".org.nz", ".org.uk",
+	".com.ag", ".org.tw", ".org.nz", ".org.uk", ".cc.ca",
 	".co.jp", ".edu.cn", ".com.bz", ".com.co", ".net.co",
 	".com.br", ".org.ag", ".org.cn", ".net.cn", ".com.cn", "design",
 	".nom.co", ".com.es", ".nom.es", ".co.in", ".firm.in", ".gen.in",

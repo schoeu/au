@@ -2,19 +2,18 @@ package main
 
 import (
 	"./analysis"
+	"./autils"
+	"./config"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 	"time"
 )
 
 var (
-	tempRs = "result"
 	// 需要分析的日志的类型
 	consoleTheme = "%c[0;32;40m%s%c[0m\n"
 	dateRe       = regexp.MustCompile("mip_processor.log.(\\d{4}-\\d{2}-\\d{2})")
@@ -24,8 +23,8 @@ var (
 	anaHelper    string
 	helpInfo     string
 	pattern      string
-	logFileRe *regexp.Regexp
-	anaDate   string
+	logFileRe    *regexp.Regexp
+	anaDate      string
 )
 
 // 主函数
@@ -41,12 +40,12 @@ func main() {
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
 
 	// 获取临时路径
-	tmpPath := getCwd()
+	tmpPath := autils.GetCwd()
 
 	flag.Parse()
 
 	if anaPath == "" {
-		log.Fatal("")
+		log.Fatal("Invild log path string.")
 		return
 	}
 
@@ -56,10 +55,8 @@ func main() {
 		anaPath = filepath.Join(tmpPath, "..", anaPath)
 	}
 
-	// 清除之前临时文件
-	cleanTmp(tmpPath)
-
 	start := time.Now()
+
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
@@ -68,7 +65,7 @@ func main() {
 	fmt.Printf("File size is %v MB, cost %v\n", fileSize/1048576, during)
 
 	if anaDate == "" {
-		anaDate = getCurrentData()
+		anaDate = autils.GetCurrentData()
 	}
 
 	if anaType == 1 {
@@ -86,6 +83,9 @@ func readDir(path string, cwd string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	autils.CleanTmp(filepath.Join(cwd, config.TagTempDir))
+	autils.CleanTmp(filepath.Join(cwd, config.TempDir))
 
 	for _, file := range files {
 		fileName := file.Name()
@@ -108,28 +108,4 @@ func readDir(path string, cwd string) {
 			}
 		}
 	}
-}
-
-// 获取程序cwd
-func getCwd() string {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return dir
-}
-
-// 清除临时文件&文件夹
-func cleanTmp(dir string) {
-	rsPath := filepath.Join(dir, "../", tempRs)
-	err := os.RemoveAll(rsPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// 获取当前日期字符串
-func getCurrentData() string {
-	t := time.Now().String()
-	return strings.Split(t, " ")[0]
 }
