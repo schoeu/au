@@ -57,6 +57,8 @@ func main() {
 
 	start := time.Now()
 
+	db := autils.OpenDb(tmpPath)
+
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
@@ -69,12 +71,14 @@ func main() {
 	}
 
 	if anaType == 1 {
-		analysis.CalcuUniqInfo(tmpPath, anaDate)
+		analysis.CalcuUniqInfo(anaDate, db)
 	} else if anaType == 2 {
-		analysis.GetTagsMap(tmpPath, anaDate)
+		analysis.GetTagsMap(anaDate, db)
 	} else if anaType == 3 {
-		analysis.GetCountData(tmpPath, anaDate)
+		analysis.GetCountData(anaDate, db)
 	}
+
+	defer db.Close()
 }
 
 // 读取指定目录

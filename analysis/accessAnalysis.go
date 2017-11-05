@@ -1,0 +1,4 @@
+package analysis
+
+func access() {
+}

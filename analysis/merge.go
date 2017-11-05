@@ -5,6 +5,7 @@ import (
 	"../config"
 	"bufio"
 	"bytes"
+	"database/sql"
 	"io"
 	"io/ioutil"
 	"log"
@@ -52,7 +53,7 @@ func MergeInfos(cwd string, msg rsMapType) {
 }
 
 // 域名数据写入数据库
-func CalcuUniqInfo(cwd string, anaDate string) {
+func CalcuUniqInfo(anaDate string, db *sql.DB) {
 	t := uniqInfoType{}
 	files, err := ioutil.ReadDir(rsPath)
 	autils.ErrHadle(err)
@@ -100,14 +101,10 @@ func CalcuUniqInfo(cwd string, anaDate string) {
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(m[k])+"', '"+anaDate+"', '"+n+"')")
 	}
 
-	db := autils.OpenDb(cwd)
-
 	sqlStr := "INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
 	_, err = db.Exec(sqlStr)
 
 	autils.ErrHadle(err)
-
-	defer db.Close()
 }
 
 // []string数据去重

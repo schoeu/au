@@ -5,6 +5,7 @@ import (
 	"../config"
 	"bufio"
 	"bytes"
+	"database/sql"
 	"io"
 	"io/ioutil"
 	"os"
@@ -87,7 +88,7 @@ func getDiffUrls(val []string) ([]string, map[string]int) {
 	normalArr := []string{}
 	uniqDomainArr := map[string]int{}
 	for _, v := range val {
-		d := GetDomain(v).host
+		d := autils.GetDomain(v).Host
 		if uniqDomainArr[d] == 0 && len(uniqUrlArr) <= tagMax {
 			uniqUrlArr = append(uniqUrlArr, v)
 		} else {
@@ -114,7 +115,7 @@ func getTags(c string) {
 }
 
 // 组件组件信息，写入数据库
-func GetTagsMap(cwd string, anaDate string) {
+func GetTagsMap(anaDate string, db *sql.DB) {
 	tagCountCtt := map[string]string{}
 	files, err := ioutil.ReadDir(tagRsPath)
 	autils.ErrHadle(err)
@@ -160,9 +161,7 @@ func GetTagsMap(cwd string, anaDate string) {
 		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','"+strconv.Itoa(len(tagCountNum))+"','"+anaDate+"', '"+time.Now().String()+"')")
 	}
 
-	db := autils.OpenDb(cwd)
 	autils.ErrHadle(err)
 	_, err = db.Exec("INSERT INTO tags (tag_name, urls, url_count, tag_count, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ","))
 	autils.ErrHadle(err)
-	defer db.Close()
 }

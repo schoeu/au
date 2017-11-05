@@ -56,8 +56,8 @@ func readLine(filePath string) {
 func makeMap(cwd string) {
 	rsMap := rsMapType{}
 	for k, _ := range uniqUrlMap {
-		top := GetDomain(k)
-		host := top.host
+		top := autils.GetDomain(k)
+		host := top.Host
 		rsMap[host] = append(rsMap[host], k)
 	}
 	MergeInfos(cwd, rsMap)

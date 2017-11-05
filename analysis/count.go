@@ -4,6 +4,7 @@ import (
 	"../autils"
 	"bufio"
 	"bytes"
+	"database/sql"
 	"io"
 	"os"
 	"regexp"
@@ -41,7 +42,7 @@ func CountData(filePath string) {
 }
 
 // 更新组件引用数信息
-func GetCountData(cwd string, anaDate string) {
+func GetCountData(anaDate string, db *sql.DB) {
 	var bf bytes.Buffer
 	bf.WriteString("UPDATE tags SET url_count = CASE tag_name")
 	for k, v := range tagsMap {
@@ -57,7 +58,6 @@ func GetCountData(cwd string, anaDate string) {
 	bf.WriteString(`'`)
 
 	sqlStr := bf.String()
-	db := autils.OpenDb(cwd)
 
 	/*
 		UPDATE categories
@@ -71,7 +71,6 @@ func GetCountData(cwd string, anaDate string) {
 
 	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
-	defer db.Close()
 }
 
 // 组件分析
