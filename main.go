@@ -58,10 +58,6 @@ func main() {
 
 	db := autils.OpenDb(tmpPath)
 
-	analysis.Access(db)
-
-	return
-
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
@@ -80,6 +76,9 @@ func main() {
 	} else if anaType == 3 {
 		analysis.GetCountData(anaDate, db)
 	}
+
+	// 更新最新接入站点信息
+	analysis.Access(db)
 
 	defer db.Close()
 }

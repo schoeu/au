@@ -3,7 +3,6 @@ package analysis
 import (
 	"../autils"
 	"database/sql"
-	"fmt"
 	"strings"
 	"time"
 )
@@ -27,11 +26,7 @@ func Access(db *sql.DB) {
 			newCt = append(newCt, v)
 		}
 	}
-
-	fmt.Println("newCt", newCt)
-
 	updateNewDomain(newCt, db)
-
 }
 
 // 近期收集到的站点信息
@@ -86,11 +81,10 @@ func updateNewDomain(d []string, db *sql.DB) {
 	yesterday := autils.GetCurrentData(time.Now().AddDate(0, 0, -1))
 
 	for i, v := range d {
-		v = strings.Replace(v, "'", "\\'", -1)
-		d[i] = "'" + v + "'"
+		rsVal := strings.Replace(v, "'", "\\'", -1)
+		d[i] = "'" + rsVal + "'"
 	}
 	dStr := strings.Join(d, ",")
-
 	_, err := db.Exec("update domain set access_date = ? where ana_date = ? and domain in (?)", yesterday, yesterday, dStr)
 	autils.ErrHadle(err)
 }
