@@ -57,7 +57,23 @@ func GetCwd() string {
 }
 
 // 获取当前日期字符串
-func GetCurrentData() string {
-	t := time.Now().String()
+//func GetCurrentData() string {
+//	t := time.Now().String()
+//	return strings.Split(t, " ")[0]
+//}
+
+// []string indexOf
+func HasVal(a *[]string, it string) (bool, string) {
+	for _, v := range *a {
+		if v == it {
+			return true, v
+		}
+	}
+	return false, ""
+}
+
+// 获取当前时间字符串
+func GetCurrentData(date time.Time) string {
+	t := date.String()
 	return strings.Split(t, " ")[0]
 }

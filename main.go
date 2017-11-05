@@ -29,7 +29,6 @@ var (
 
 // 主函数
 func main() {
-
 	flag.IntVar(&anaType, "type", 1,
 		`日志分析类型
 	1: 生成域名url列表
@@ -59,6 +58,10 @@ func main() {
 
 	db := autils.OpenDb(tmpPath)
 
+	analysis.Access(db)
+
+	return
+
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
@@ -67,7 +70,7 @@ func main() {
 	fmt.Printf("File size is %v MB, cost %v\n", fileSize/1048576, during)
 
 	if anaDate == "" {
-		anaDate = autils.GetCurrentData()
+		anaDate = autils.GetCurrentData(time.Now())
 	}
 
 	if anaType == 1 {
