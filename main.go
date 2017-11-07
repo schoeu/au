@@ -4,6 +4,8 @@ import (
 	"./analysis"
 	"./autils"
 	"./config"
+	"./tasks"
+	"database/sql"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -56,7 +58,13 @@ func main() {
 
 	start := time.Now()
 
-	db := autils.OpenDb(tmpPath)
+	db := autils.OpenDb(config.LogDb)
+	defer db.Close()
+
+	flowDb := autils.OpenDb(config.FlowDb)
+	defer flowDb.Close()
+	// 执行定时任务
+	runTask(db, flowDb)
 
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
@@ -79,8 +87,6 @@ func main() {
 
 	// 更新最新接入站点信息
 	analysis.Access(db)
-
-	defer db.Close()
 }
 
 // 读取指定目录
@@ -114,4 +120,13 @@ func readDir(path string, cwd string) {
 			}
 		}
 	}
+}
+
+// 任务列表
+func runTask(db *sql.DB, flowDb *sql.DB) {
+	// 更新组件列表
+	tasks.UpdateTags(db)
+	// 更新流量数据
+	tasks.UpdateAllFlow(flowDb)
+
 }

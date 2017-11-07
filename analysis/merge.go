@@ -91,7 +91,7 @@ func CalcuUniqInfo(anaDate string, db *sql.DB) {
 	n := time.Now().String()
 
 	for k, v := range t {
-		// 过滤不合法域名
+		// 简单过滤下不合法漏网的域名
 		if !strings.Contains(k, ".") {
 			continue
 		}

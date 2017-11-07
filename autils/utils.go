@@ -1,7 +1,6 @@
 package autils
 
 import (
-	"../config"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -18,8 +17,8 @@ func ErrHadle(err error) {
 }
 
 // 创建数据库链接
-func OpenDb(cwd string) *sql.DB {
-	db, err := sql.Open("mysql", config.DbConfig)
+func OpenDb(dbStr string) *sql.DB {
+	db, err := sql.Open("mysql", dbStr)
 	ErrHadle(err)
 
 	err = db.Ping()
@@ -55,12 +54,6 @@ func GetCwd() string {
 	}
 	return dir
 }
-
-// 获取当前日期字符串
-//func GetCurrentData() string {
-//	t := time.Now().String()
-//	return strings.Split(t, " ")[0]
-//}
 
 // []string indexOf
 func HasVal(a *[]string, it string) (bool, string) {
