@@ -77,7 +77,7 @@ func storeData(db *sql.DB, data interface{}) {
 		bf.WriteString(")")
 		sqlStr = append(sqlStr, bf.String())
 	}
-	sql := "INSERT INTO all_flow (date, click, display, cd_rote, ana_date) VALUES " + strings.Join(sqlStr, ",")
+	sql := "INSERT INTO all_flow (date, click, display, cd_rate, ana_date) VALUES " + strings.Join(sqlStr, ",")
 	fmt.Println(sql)
 	_, err := db.Exec(sql)
 	autils.ErrHadle(err)
