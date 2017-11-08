@@ -63,8 +63,6 @@ func main() {
 
 	flowDb := autils.OpenDb(config.FlowDb)
 	defer flowDb.Close()
-	// 执行定时任务
-	runTask(db, flowDb)
 
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
@@ -87,6 +85,9 @@ func main() {
 
 	// 更新最新接入站点信息
 	analysis.Access(db)
+
+	// 执行定时任务
+	runTask(db, flowDb)
 }
 
 // 读取指定目录
