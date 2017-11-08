@@ -64,10 +64,6 @@ func main() {
 	flowDb := autils.OpenDb(config.FlowDb)
 	defer flowDb.Close()
 
-
-	tasks.GetSiteFlow(flowDb)
-	return
-
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
@@ -133,5 +129,8 @@ func runTask(db *sql.DB, flowDb *sql.DB) {
 	tasks.UpdateTags(db)
 	// 更新流量数据
 	tasks.UpdateAllFlow(flowDb)
-
+	// 单站点数据
+	tasks.GetSiteFlow(flowDb)
+	// 全流量数据
+	tasks.UpdateAllFlow(flowDb)
 }

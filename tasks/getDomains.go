@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -14,67 +13,15 @@ import (
 	"time"
 )
 
-type rsJson struct {
-	Data struct {
-		Data []string
-	}
-}
-
-type siteJson struct {
-	Retcode int
-	Data    struct {
-		Data [][]interface{}
-	}
-}
-
-type siteStruct struct {
+type domainStruct struct {
 	STime string `json:"sBeginTime"`
 	ETime string `json:"sEndTime"`
-}
-
-func GetSiteFlow(db *sql.DB) {
-	ss := siteStruct{}
-	now := time.Now()
-	today := autils.GetCurrentData(now)
-	yesterday := autils.GetCurrentData(now.AddDate(0, 0, -1))
-	yesStr := strings.Replace(yesterday, "-", "", -1)
-
-	someTime := autils.GetCurrentData(now.AddDate(0, 0, -2))
-	timeStr := strings.Replace(someTime, "-", "", -1)
-
-	ss.STime = timeStr + "00"
-	ss.ETime = yesStr + "23"
-
-	queryStr, err := json.Marshal(ss)
-	autils.ErrHadle(err)
-
-	rsUrl := config.SitesUrl + string(queryStr)
-	rs := getSites(rsUrl)
-	sites := rs.Data.Data
-
-	var info []string
-	for _, v := range sites {
-		if strings.Contains(v, ".") {
-			getSiteInfo(v, db)
-			var bf bytes.Buffer
-			bf.WriteString("(")
-			bf.WriteString("'" + v + "', '" + today + "'")
-			bf.WriteString(")")
-			info = append(info, bf.String())
-		}
-	}
-	updateDomains(info, db)
-}
-
-func updateDomains(sites []string, db *sql.DB) {
-	sql := "INSERT INTO domains (domain, ana_date) VALUES " + strings.Join(sites, ",")
-	fmt.Println(sql)
-	_, err := db.Exec(sql)
-	autils.ErrHadle(err)
+	SType string `json:"sType"`
+	SSite string `json:"sSite"`
 }
 
 // 获取单个站点数据
-func getSiteInfo(domain string, db *sql.DB) {
+func GetDomains(domain string, db *sql.DB) {
 	yesterday := autils.GetCurrentData(time.Now().AddDate(0, 0, -1))
 	yesStr := strings.Replace(yesterday, "-", "", -1)
 
@@ -136,16 +83,4 @@ func getSiteInfo(domain string, db *sql.DB) {
 	sql := "INSERT INTO site_flow (domain, date, click, display, total_click, total_display, cd_rate, flow_rate, ana_date) VALUES " + strings.Join(siteInfos, ",")
 	_, err = db.Exec(sql)
 	autils.ErrHadle(err)
-}
-
-func getSites(url string) rsJson {
-	res, err := http.Get(url)
-	autils.ErrHadle(err)
-
-	rj := rsJson{}
-	body, err := ioutil.ReadAll(res.Body)
-	json.Unmarshal(body, &rj)
-	res.Body.Close()
-	autils.ErrHadle(err)
-	return rj
 }
