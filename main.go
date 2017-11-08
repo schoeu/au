@@ -64,6 +64,10 @@ func main() {
 	flowDb := autils.OpenDb(config.FlowDb)
 	defer flowDb.Close()
 
+
+	tasks.GetSiteFlow(flowDb)
+	return
+
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
