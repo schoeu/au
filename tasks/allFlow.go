@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -77,8 +78,9 @@ func storeData(db *sql.DB, data interface{}) {
 	sqlStr = append(sqlStr, bf.String())
 	sql := "INSERT INTO all_flow (date, click, display, cd_rate, ana_date) VALUES " + strings.Join(sqlStr, ",")
 	_, err := db.Exec(sql)
-	autils.ErrHadle(err)
-
+	if err == nil {
+		fmt.Println("Update all_flow list successfully.")
+	}
 }
 
 // 请求处理

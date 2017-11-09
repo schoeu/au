@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -71,7 +72,9 @@ func updateDomains(sites []string, db *sql.DB) {
 
 	sql := "INSERT INTO domains (domain, ana_date) VALUES " + strings.Join(sites, ",")
 	_, err = db.Exec(sql)
-	autils.ErrHadle(err)
+	if err == nil {
+		fmt.Println("Update domains successfully.")
+	}
 }
 
 // 获取单个站点数据

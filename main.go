@@ -133,4 +133,6 @@ func runTask(db *sql.DB, flowDb *sql.DB) {
 	tasks.GetSiteFlow(flowDb)
 	// 全流量数据
 	tasks.UpdateAllFlow(flowDb)
+	// 站点详情数据
+	tasks.GetSitesData(flowDb)
 }
