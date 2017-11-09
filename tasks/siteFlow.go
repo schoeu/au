@@ -106,8 +106,10 @@ func getSiteInfo(domain string, db *sql.DB) {
 	autils.ErrHadle(err)
 
 	if sj.Retcode != 0 {
+		fmt.Println(domain, "update failed.")
 		return
 	}
+	fmt.Println(domain, "update successfully.")
 
 	// sj.Data.Data   [][]interface{}
 	now := autils.GetCurrentData(time.Now())

@@ -78,6 +78,6 @@ func storeTags(db *sql.DB, data *[]string) {
 	_, err = db.Exec(sqlStr)
 
 	if err == nil {
-		fmt.Println("Update tag list successfully.")
+		fmt.Println("Update taglist successfully.")
 	}
 }
