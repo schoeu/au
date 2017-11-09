@@ -68,7 +68,7 @@ func getSiteDetail(db *sql.DB, detailInfo siteJson, date string) {
 				flowArr = append(flowArr, strconv.Itoa(f))
 			case float64:
 				f := val.(float64)
-				num := strconv.FormatFloat(f, 'f', 4, 64)
+				num := strconv.FormatFloat(f, 'f', 2, 64)
 				flowArr = append(flowArr, num)
 			default:
 				_ = t
