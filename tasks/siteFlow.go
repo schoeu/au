@@ -106,7 +106,7 @@ func getSiteInfo(domain string, db *sql.DB) {
 	autils.ErrHadle(err)
 
 	if sj.Retcode != 0 {
-		fmt.Println(domain, "update failed.")
+		fmt.Println(yesStr, domain, "update failed.")
 		return
 	}
 	fmt.Println(domain, "update successfully.")

@@ -129,13 +129,11 @@ func readDir(path string, cwd string) {
 // 任务列表
 func runTask(db *sql.DB, flowDb *sql.DB) {
 	// 更新组件列表
-	//tasks.UpdateTags(db)
+	tasks.UpdateTags(db)
 	// 更新流量数据
 	tasks.UpdateAllFlow(flowDb)
 	// 单站点数据
 	tasks.GetSiteFlow(flowDb)
-	// 全流量数据
-	//tasks.UpdateAllFlow(flowDb)
 	// 站点详情数据
 	tasks.GetSitesData(flowDb)
 }
