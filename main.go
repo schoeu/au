@@ -40,10 +40,24 @@ func main() {
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
 
-	// 获取临时路径
-	tmpPath := autils.GetCwd()
 
 	flag.Parse()
+
+	db := autils.OpenDb(config.LogDb)
+	defer db.Close()
+
+	flowDb := autils.OpenDb(config.FlowDb)
+	defer flowDb.Close()
+
+	if anaType == 4 {
+		// 更新最新接入站点信息
+		analysis.Access(db)
+
+		// 执行定时任务
+		runTask(db, flowDb)
+		return
+	}
+
 
 	if anaPath == "" {
 		log.Fatal("Invild log path string.")
@@ -52,22 +66,17 @@ func main() {
 
 	logFileRe = regexp.MustCompile(pattern)
 
+	// 获取临时路径
+	tmpPath := autils.GetCwd()
+
 	if !filepath.IsAbs(anaPath) {
 		anaPath = filepath.Join(tmpPath, "..", anaPath)
 	}
 
-	start := time.Now()
-
-	db := autils.OpenDb(config.LogDb)
-	defer db.Close()
-
-	flowDb := autils.OpenDb(config.FlowDb)
-	defer flowDb.Close()
-
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
-	during := time.Since(start)
+	during := time.Since(time.Now())
 
 	fmt.Printf("File size is %v MB, cost %v\n", fileSize/1048576, during)
 
@@ -82,12 +91,6 @@ func main() {
 	} else if anaType == 3 {
 		analysis.GetCountData(anaDate, db)
 	}
-
-	// 更新最新接入站点信息
-	analysis.Access(db)
-
-	// 执行定时任务
-	runTask(db, flowDb)
 }
 
 // 读取指定目录
@@ -126,13 +129,13 @@ func readDir(path string, cwd string) {
 // 任务列表
 func runTask(db *sql.DB, flowDb *sql.DB) {
 	// 更新组件列表
-	tasks.UpdateTags(db)
+	//tasks.UpdateTags(db)
 	// 更新流量数据
 	tasks.UpdateAllFlow(flowDb)
 	// 单站点数据
 	tasks.GetSiteFlow(flowDb)
 	// 全流量数据
-	tasks.UpdateAllFlow(flowDb)
+	//tasks.UpdateAllFlow(flowDb)
 	// 站点详情数据
 	tasks.GetSitesData(flowDb)
 }
