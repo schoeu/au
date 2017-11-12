@@ -42,10 +42,20 @@ func main() {
 
 	flag.Parse()
 
-	db := autils.OpenDb(config.LogDb)
+	// 之后数据源全量替换到pq
+	if anaType == 5 {
+		// 全量站点数据处理
+		pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
+		defer pqDB.Close()
+
+		tasks.GetQPSites(pqDB)
+		return
+	}
+
+	db := autils.OpenDb("mysql", config.LogDb)
 	defer db.Close()
 
-	flowDb := autils.OpenDb(config.FlowDb)
+	flowDb := autils.OpenDb("mysql", config.FlowDb)
 	defer flowDb.Close()
 
 	if anaType == 4 {

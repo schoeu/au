@@ -17,8 +17,11 @@ func ErrHadle(err error) {
 }
 
 // 创建数据库链接
-func OpenDb(dbStr string) *sql.DB {
-	db, err := sql.Open("mysql", dbStr)
+func OpenDb(dbTyepe string, dbStr string) *sql.DB {
+	if dbTyepe == "" {
+		dbTyepe = "mysql"
+	}
+	db, err := sql.Open(dbTyepe, dbStr)
 	ErrHadle(err)
 
 	err = db.Ping()
