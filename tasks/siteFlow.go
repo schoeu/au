@@ -109,7 +109,7 @@ func getSiteInfo(domain string, db *sql.DB) {
 		fmt.Println(yesStr, domain, "update failed.")
 		return
 	}
-	fmt.Println(domain, "update successfully.")
+	fmt.Println(yesStr, domain, "update successfully.")
 
 	// sj.Data.Data   [][]interface{}
 	now := autils.GetCurrentData(time.Now())

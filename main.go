@@ -40,7 +40,6 @@ func main() {
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
 
-
 	flag.Parse()
 
 	db := autils.OpenDb(config.LogDb)
@@ -57,7 +56,6 @@ func main() {
 		runTask(db, flowDb)
 		return
 	}
-
 
 	if anaPath == "" {
 		log.Fatal("Invild log path string.")
