@@ -109,7 +109,6 @@ func getSiteInfo(domain string, db *sql.DB) {
 		fmt.Println(yesStr, domain, "update failed.")
 		return
 	}
-	fmt.Println(yesStr, domain, "update successfully.")
 
 	// sj.Data.Data   [][]interface{}
 	now := autils.GetCurrentData(time.Now())
@@ -142,6 +141,9 @@ func getSiteInfo(domain string, db *sql.DB) {
 	sql := "INSERT INTO site_flow (domain, date, click, display, total_click, total_display, cd_rate, flow_rate, ana_date) VALUES " + strings.Join(siteInfos, ",")
 	_, err = db.Exec(sql)
 	autils.ErrHadle(err)
+	if err == nil {
+		fmt.Println(yesStr, "update successfully.")
+	}
 }
 
 func getSites(url string) rsJson {

@@ -38,12 +38,9 @@ func GetSitesData(db *sql.DB) {
 // 获取站点详细数据
 func getSiteDetail(db *sql.DB, detailInfo siteJson, date string) {
 	if detailInfo.Retcode != 0 {
-		fmt.Println(date, "失败")
+		fmt.Println(date, "Update site_detail error.")
 		return
 	}
-
-	fmt.Println(date, "成功")
-
 	// sj.Data.Data   [][]interface{}
 	now := autils.GetCurrentData(time.Now())
 
@@ -88,8 +85,9 @@ func getSiteDetail(db *sql.DB, detailInfo siteJson, date string) {
 		strings.Join(siteInfos, ",")
 
 	_, err := db.Exec(sql)
+	autils.ErrHadle(err)
 	if err == nil {
-		fmt.Println("Update site_detail successfully.")
+		fmt.Println(date, "Update site_detail successfully.")
 	}
 }
 

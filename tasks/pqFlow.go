@@ -11,7 +11,7 @@ import (
 
 func GetQPSites(db *sql.DB) {
 	ss := siteDetail{}
-	endTime  := time.Now().AddDate(0, 0, -2)
+	endTime := time.Now().AddDate(0, 0, -2)
 	start := autils.GetCurrentData(endTime)
 	ss.Sday = strings.Replace(start, "-", "", -1)
 

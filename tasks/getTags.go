@@ -76,7 +76,7 @@ func storeTags(db *sql.DB, data *[]string) {
 
 	sqlStr := "INSERT INTO taglist (name, type, ana_date) VALUES " + strings.Join(sqlArr, ",")
 	_, err = db.Exec(sqlStr)
-
+	autils.ErrHadle(err)
 	if err == nil {
 		fmt.Println("Update taglist successfully.")
 	}
