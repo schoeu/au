@@ -41,29 +41,15 @@ func main() {
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
 
 	flag.Parse()
-
-	// 之后数据源全量替换到pq
-	if anaType == 5 {
-		// 全量站点数据处理
-		pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
-		defer pqDB.Close()
-
-		tasks.GetQPSites(pqDB)
-		return
-	}
-
-	db := autils.OpenDb("mysql", config.LogDb)
-	defer db.Close()
-
-	flowDb := autils.OpenDb("mysql", config.FlowDb)
-	defer flowDb.Close()
+	pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
+	defer pqDB.Close()
 
 	if anaType == 4 {
 		// 更新最新接入站点信息
-		analysis.Access(db)
+		// analysis.Access(pqDB)
 
-		// 执行定时任务
-		runTask(db, flowDb)
+		// 执行任务
+		runTask(pqDB)
 		return
 	}
 
@@ -93,11 +79,11 @@ func main() {
 	}
 
 	if anaType == 1 {
-		analysis.CalcuUniqInfo(anaDate, db)
+		analysis.CalcuUniqInfo(anaDate, pqDB)
 	} else if anaType == 2 {
-		analysis.GetTagsMap(anaDate, db)
+		analysis.GetTagsMap(anaDate, pqDB)
 	} else if anaType == 3 {
-		analysis.GetCountData(anaDate, db)
+		analysis.GetCountData(anaDate, pqDB)
 	}
 }
 
@@ -135,13 +121,15 @@ func readDir(path string, cwd string) {
 }
 
 // 任务列表
-func runTask(db *sql.DB, flowDb *sql.DB) {
+func runTask(db *sql.DB) {
 	// 更新组件列表
 	tasks.UpdateTags(db)
 	// 更新流量数据
-	tasks.UpdateAllFlow(flowDb)
+	tasks.UpdateAllFlow(db)
 	// 单站点数据
-	tasks.GetSiteFlow(flowDb)
+	tasks.GetSiteFlow(db)
 	// 站点详情数据
-	tasks.GetSitesData(flowDb)
+	tasks.GetSitesData(db)
+	// 全量站点存储
+	tasks.GetQPSites(db)
 }
