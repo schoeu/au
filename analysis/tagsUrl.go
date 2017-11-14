@@ -158,7 +158,7 @@ func GetTagsMap(anaDate string, db *sql.DB) {
 
 		tagCountStr := tagCountCtt[k]
 		tagCountNum := strings.Split(tagCountStr, ",")
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','"+strconv.Itoa(len(tagCountNum))+"','"+anaDate+"', '"+time.Now().String()+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '0', '"+string(tagCountStr)+"','"+strconv.Itoa(len(tagCountNum))+"','"+anaDate+"', '"+autils.GetCurrentData(time.Now())+"')")
 	}
 
 	autils.ErrHadle(err)

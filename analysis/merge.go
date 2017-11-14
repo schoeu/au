@@ -88,7 +88,6 @@ func CalcuUniqInfo(anaDate string, db *sql.DB) {
 		t[k] = uniq(v)
 	}
 	bArr := []string{}
-	n := time.Now().String()
 
 	for k, v := range t {
 		// 简单过滤下不合法漏网的域名
@@ -103,7 +102,7 @@ func CalcuUniqInfo(anaDate string, db *sql.DB) {
 
 		tmp := strings.Join(v[:rl], ",")
 
-		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(m[k])+"', '"+anaDate+"', '"+n+"')")
+		bArr = append(bArr, "('"+k+"', '"+tmp+"', '"+strconv.Itoa(m[k])+"', '"+anaDate+"', '"+autils.GetCurrentData(time.Now())+"')")
 	}
 
 	sqlStr := "INSERT INTO domain (domain, urls, url_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
