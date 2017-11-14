@@ -2,7 +2,6 @@ package tasks
 
 import (
 	"../autils"
-	"../config"
 	"bytes"
 	"database/sql"
 	"encoding/json"
