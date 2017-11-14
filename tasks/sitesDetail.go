@@ -18,23 +18,6 @@ type siteDetail struct {
 	Sday string `json:"sDay"`
 }
 
-func GetSitesData(db *sql.DB) {
-	ss := siteDetail{}
-	dayTime := time.Now().AddDate(0, 0, -2)
-	start := autils.GetCurrentData(dayTime)
-	timeStr := strings.Replace(start, "-", "", -1)
-
-	ss.Sday = timeStr
-
-	queryStr, err := json.Marshal(ss)
-	autils.ErrHadle(err)
-
-	rsUrl := config.SiteDetail + string(queryStr)
-	rs := requestDetail(rsUrl)
-
-	getSiteDetail(db, rs, start)
-}
-
 // 获取站点详细数据
 func getSiteDetail(db *sql.DB, detailInfo siteJson, date string) {
 	if detailInfo.Retcode != 0 {

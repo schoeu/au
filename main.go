@@ -128,8 +128,6 @@ func runTask(db *sql.DB) {
 	tasks.UpdateAllFlow(db)
 	// 单站点数据
 	tasks.GetSiteFlow(db)
-	// 站点详情数据
-	tasks.GetSitesData(db)
-	// 全量站点存储
+	// 全量站点详情
 	tasks.GetQPSites(db)
 }
