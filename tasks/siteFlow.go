@@ -142,7 +142,7 @@ func getSiteInfo(domain string, db *sql.DB) {
 	_, err = db.Exec(sql)
 	autils.ErrHadle(err)
 	if err == nil {
-		fmt.Println(yesStr, "update successfully.")
+		fmt.Println(yesStr, domain, "update successfully.")
 	}
 }
 
