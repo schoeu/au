@@ -39,5 +39,5 @@ func updateNewDomain(d []string, db *sql.DB, date string) {
 	dStr := strings.Join(d, ",")
 	_, err := db.Exec("update site_detail set access_date = '" + date + "' where date = '" + date + "' and domain in (" + dStr + ")")
 	autils.ErrHadle(err)
-	fmt.Print("update site_detail access date successfully.")
+	fmt.Println("update site_detail access date successfully.")
 }
