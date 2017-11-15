@@ -42,12 +42,10 @@ func main() {
 
 	flag.Parse()
 	pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
+	/*pqDB := autils.OpenDb("postgres", config.PQTestUrl)*/
 	defer pqDB.Close()
 
 	if anaType == 4 {
-		// 更新最新接入站点信息
-		// analysis.Access(pqDB)
-
 		// 执行任务
 		runTask(pqDB)
 		return
@@ -130,4 +128,6 @@ func runTask(db *sql.DB) {
 	tasks.GetSiteFlow(db)
 	// 全量站点详情
 	tasks.GetQPSites(db)
+	// 更新最新接入站点信息
+	tasks.Access(db)
 }
