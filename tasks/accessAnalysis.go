@@ -3,9 +3,9 @@ package tasks
 import (
 	"../autils"
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
-	"fmt"
 )
 
 type domainCt []string

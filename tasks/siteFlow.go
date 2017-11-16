@@ -51,7 +51,10 @@ func GetSiteFlow(db *sql.DB) {
 	rsUrl := config.SitesUrl + string(queryStr)
 	rs := getSites(rsUrl)
 	sites := rs.Data.Data
-
+	if len(sites) == 0 {
+		fmt.Println("No data for domains.")
+		return
+	}
 	var info []string
 	for _, v := range sites {
 		if strings.Contains(v, ".") {
@@ -114,6 +117,12 @@ func getSiteInfo(domain string, db *sql.DB) {
 	now := autils.GetCurrentData(time.Now())
 	var siteInfos []string
 	sjData := sj.Data.Data
+
+	if len(sjData) == 0 {
+		fmt.Println("No data for site_flow.")
+		return
+	}
+
 	v := sjData[len(sjData)-1]
 	var flowArr []string
 	flowArr = append(flowArr, "'"+domain+"'")

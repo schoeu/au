@@ -57,6 +57,10 @@ func GetDomains(domain string, db *sql.DB) {
 	now := autils.GetCurrentData(time.Now())
 	var siteInfos []string
 	sjData := sj.Data.Data
+	if len(sjData) == 0 {
+		fmt.Println("No data for site_flow.")
+		return
+	}
 	v := sjData[len(sjData)-1]
 	var flowArr []string
 	flowArr = append(flowArr, "'"+domain+"'")

@@ -27,6 +27,12 @@ func getSiteDetail(db *sql.DB, detailInfo siteJson, date string) {
 	now := autils.GetCurrentData(time.Now())
 
 	sjData := detailInfo.Data.Data
+
+	if len(sjData) == 0 {
+		fmt.Println(date, "No data for site_detail.")
+		return
+	}
+
 	var siteInfos []string
 	for _, v := range sjData {
 		var flowArr []string
