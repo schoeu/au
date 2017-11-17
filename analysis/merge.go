@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -71,6 +72,14 @@ func CalcuUniqInfo(anaDate string, db *sql.DB) {
 			content := string(a)
 			infos := strings.Split(content, " ")
 			if len(infos) > 1 {
+				tmpUrl := infos[1]
+				if tmpUrl != "" {
+					u, err := url.QueryUnescape(tmpUrl)
+					if err == nil {
+						tmpUrl = u
+					}
+					infos[1] = strings.Replace(tmpUrl, "'", "''", -1)
+				}
 				tag := infos[0]
 				urlArr := strings.Split(infos[1], ",")
 

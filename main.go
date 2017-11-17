@@ -41,8 +41,8 @@ func main() {
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
 
 	flag.Parse()
-	pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
-	/*pqDB := autils.OpenDb("postgres", config.PQTestUrl)*/
+	//pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
+	pqDB := autils.OpenDb("postgres", config.PQTestUrl)
 	defer pqDB.Close()
 
 	if anaType == 4 {
