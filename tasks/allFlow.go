@@ -22,11 +22,11 @@ type flowStruct struct {
 }
 
 // 请求流量数据
-func UpdateAllFlow(db *sql.DB) {
-	yesterday := autils.GetCurrentData(time.Now().AddDate(0, 0, -1))
+func UpdateAllFlow(db *sql.DB, date time.Time) {
+	yesterday := autils.GetCurrentData(date)
 	yesStr := strings.Replace(yesterday, "-", "", -1)
 
-	someTime := autils.GetCurrentData(time.Now().AddDate(0, 0, -2))
+	someTime := autils.GetCurrentData(date.AddDate(0, 0, -1))
 	timeStr := strings.Replace(someTime, "-", "", -1)
 	fs := flowStruct{
 		timeStr,

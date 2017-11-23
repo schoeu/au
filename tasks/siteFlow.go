@@ -32,14 +32,14 @@ type siteStruct struct {
 	ETime string `json:"sEndTime"`
 }
 
-func GetSiteFlow(db *sql.DB) {
+func GetSiteFlow(db *sql.DB, date time.Time) {
 	ss := siteStruct{}
 	now := time.Now()
 	today := autils.GetCurrentData(now)
-	yesterday := autils.GetCurrentData(now.AddDate(0, 0, -1))
+	yesterday := autils.GetCurrentData(date)
 	yesStr := strings.Replace(yesterday, "-", "", -1)
 
-	someTime := autils.GetCurrentData(now.AddDate(0, 0, -2))
+	someTime := autils.GetCurrentData(date.AddDate(0, 0, -1))
 	timeStr := strings.Replace(someTime, "-", "", -1)
 
 	ss.STime = timeStr + "00"
@@ -58,7 +58,7 @@ func GetSiteFlow(db *sql.DB) {
 	var info []string
 	for _, v := range sites {
 		if strings.Contains(v, ".") {
-			getSiteInfo(v, db)
+			getSiteInfo(v, db, date)
 			var bf bytes.Buffer
 			bf.WriteString("(")
 			bf.WriteString("'" + v + "', '" + today + "'")
@@ -81,11 +81,11 @@ func updateDomains(sites []string, db *sql.DB) {
 }
 
 // 获取单个站点数据
-func getSiteInfo(domain string, db *sql.DB) {
-	yesterday := autils.GetCurrentData(time.Now().AddDate(0, 0, -1))
+func getSiteInfo(domain string, db *sql.DB, date time.Time) {
+	yesterday := autils.GetCurrentData(date)
 	yesStr := strings.Replace(yesterday, "-", "", -1)
 
-	someTime := autils.GetCurrentData(time.Now().AddDate(0, 0, -2))
+	someTime := autils.GetCurrentData(date.AddDate(0, 0, -1))
 	timeStr := strings.Replace(someTime, "-", "", -1)
 	fs := flowStruct{
 		timeStr,

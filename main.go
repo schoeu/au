@@ -27,10 +27,12 @@ var (
 	pattern      string
 	logFileRe    *regexp.Regexp
 	anaDate      string
+	shortForm    = "2006-01-02"
 )
 
 // 主函数
 func main() {
+	var date string
 	flag.IntVar(&anaType, "type", 1,
 		`日志分析类型
 	1: 生成域名url列表
@@ -39,6 +41,7 @@ func main() {
 	flag.StringVar(&anaPath, "path", "", "需要分析的日志文件夹的绝对路径")
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
+	flag.StringVar(&date, "date", "默认日期为两天前（yyyy-MM-dd）", "拉取数据的日期")
 
 	flag.Parse()
 	pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
@@ -47,7 +50,11 @@ func main() {
 
 	if anaType == 4 {
 		// 执行任务
-		runTask(pqDB)
+		rsDate := time.Now().AddDate(0, 0, -1)
+		if date != "" {
+			rsDate, _ = time.Parse(shortForm, date)
+		}
+		runTask(pqDB, rsDate)
 		return
 	}
 
@@ -119,15 +126,15 @@ func readDir(path string, cwd string) {
 }
 
 // 任务列表
-func runTask(db *sql.DB) {
+func runTask(db *sql.DB, date time.Time) {
 	// 更新组件列表
 	tasks.UpdateTags(db)
 	// 更新流量数据
-	tasks.UpdateAllFlow(db)
+	tasks.UpdateAllFlow(db, date)
 	// 单站点数据
-	tasks.GetSiteFlow(db)
+	tasks.GetSiteFlow(db, date)
 	// 全量站点详情
-	tasks.GetQPSites(db)
+	tasks.GetQPSites(db, date)
 	// 更新最新接入站点信息
-	tasks.Access(db)
+	tasks.Access(db, date)
 }

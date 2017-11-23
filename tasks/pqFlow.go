@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-func GetQPSites(db *sql.DB) {
+func GetQPSites(db *sql.DB, date time.Time) {
 	ss := siteDetail{}
-	endTime := time.Now().AddDate(0, 0, -2)
+	endTime := date.AddDate(0, 0, -1)
 	start := autils.GetCurrentData(endTime)
 	ss.Sday = strings.Replace(start, "-", "", -1)
 

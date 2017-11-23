@@ -10,11 +10,10 @@ import (
 
 type domainCt []string
 
-func Access(db *sql.DB) {
-	now := time.Now()
-	currentDay := autils.GetCurrentData(now.AddDate(0, 0, -2))
-	day := autils.GetCurrentData(now.AddDate(0, 0, -3))
-	lastS := autils.GetCurrentData(now.AddDate(0, -3, 0))
+func Access(db *sql.DB, date time.Time) {
+	currentDay := autils.GetCurrentData(date.AddDate(0, 0, -1))
+	day := autils.GetCurrentData(date.AddDate(0, 0, -2))
+	lastS := autils.GetCurrentData(date.AddDate(0, -3, 0))
 
 	rows, err := db.Query("select domain from site_detail where date = '" + currentDay + "' except select distinct  domain from site_detail where date <= '" + day + "' and date >= '" + lastS + "'")
 	autils.ErrHadle(err)
