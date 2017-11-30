@@ -78,6 +78,7 @@ func CalcuUniqInfo(anaDate string, db *sql.DB) {
 					//if err == nil {
 					//	tmpUrl = u
 					//}
+
 					infos[1] = strings.Replace(tmpUrl, "'", "''", -1)
 				}
 				tag := infos[0]

@@ -32,7 +32,7 @@ var (
 
 // 主函数
 func main() {
-	var date string
+	var date, isDebug string
 	flag.IntVar(&anaType, "type", 1,
 		`日志分析类型
 	1: 生成域名url列表
@@ -42,10 +42,17 @@ func main() {
 	flag.StringVar(&anaHelper, "help", helpInfo, "help")
 	flag.StringVar(&pattern, "pattern", "mip_processor.log.\\d{4}", "需要统计的日志文件名模式，支持正则，默认为全统计")
 	flag.StringVar(&date, "date", "默认日期为两天前（yyyy-MM-dd）", "拉取数据的日期")
+	flag.StringVar(&isDebug, "debug", "", "是否开启调试模式")
 
 	flag.Parse()
-	pqDB := autils.OpenDb("postgres", config.PQFlowUrl)
-	//pqDB := autils.OpenDb("postgres", config.PQTestUrl)
+
+	rsPQUrl := config.PQFlowUrl
+	// 是否开启调试模式
+	if isDebug != "" {
+		rsPQUrl = config.PQTestUrl
+	}
+
+	pqDB := autils.OpenDb("postgres", rsPQUrl)
 	defer pqDB.Close()
 
 	if anaType == 4 {

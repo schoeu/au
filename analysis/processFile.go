@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 )
 
 var (
@@ -68,12 +67,13 @@ func analysisFile(content string) {
 	rs := re.FindAllStringSubmatch(content, -1)
 	url := rs[0][0]
 	crtExt := filepath.Ext(url)
-	rsUrl := strings.Replace(url, "'", "\\'", -1)
 	for _, v := range ignorExts {
 		if v == crtExt {
 			return
 		}
 	}
-
-	uniqUrlMap[rsUrl] = 1
+	matched, _ := regexp.MatchString("^http[s]?:\\/\\/.+?", url)
+	if matched {
+		uniqUrlMap[url] = 1
+	}
 }
