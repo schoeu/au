@@ -84,12 +84,11 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 
 // 组件信息去重
 func getDiffUrls(val []string) ([]string, map[string]int) {
-	var uniqUrlArr []string
-	normalArr := []string{}
+	var uniqUrlArr, normalArr []string
 	uniqDomainArr := map[string]int{}
 	for _, v := range val {
 		d := autils.GetDomain(v).Host
-		if uniqDomainArr[d] == 0 && len(uniqUrlArr) <= tagMax {
+		if uniqDomainArr[d] == 0 {
 			uniqUrlArr = append(uniqUrlArr, v)
 		} else {
 			normalArr = append(normalArr, v)
