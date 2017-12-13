@@ -61,6 +61,7 @@ func TagsUrl(filePath string, cwd string, fileName string) {
 
 		buf.WriteString(k)
 		buf.WriteString(" ")
+
 		b, uDArr := getDiffUrls(v)
 		l := len(v)
 		if l > tagMax {
@@ -150,8 +151,8 @@ func GetTagsMap(anaDate string, db *sql.DB) {
 	bArr := []string{}
 	for k, v := range tagsRsUrlArr {
 		rl := len(v)
-		if rl > 10 {
-			rl = 10
+		if rl > tagMax {
+			rl = tagMax
 		}
 		tmp := strings.Join(v[:rl], ",")
 
@@ -161,6 +162,8 @@ func GetTagsMap(anaDate string, db *sql.DB) {
 	}
 
 	autils.ErrHadle(err)
-	_, err = db.Exec("INSERT INTO tags (tag_name, urls, url_count, tag_count, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ","))
+
+	sqlStr := "INSERT INTO tags (tag_name, urls, url_count, tag_count, domain_count, ana_date, edit_date) VALUES " + strings.Join(bArr, ",")
+	_, err = db.Exec(sqlStr)
 	autils.ErrHadle(err)
 }
