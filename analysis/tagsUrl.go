@@ -154,7 +154,9 @@ func GetTagsMap(anaDate string, db *sql.DB) {
 		if rl > tagMax {
 			rl = tagMax
 		}
-		tmp := strings.Join(v[:rl], ",")
+
+		rs, _ := getDiffUrls(v)
+		tmp := strings.Join(rs[:rl], ",")
 
 		tagCountStr := tagCountCtt[k]
 		tagCountNum := strings.Split(tagCountStr, ",")
