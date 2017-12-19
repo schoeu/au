@@ -13,7 +13,7 @@ import (
 // 统一错误处理
 func ErrHadle(err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 

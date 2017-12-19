@@ -21,6 +21,10 @@ type flowStruct struct {
 	SSite string `json:"sSite"`
 }
 
+type webbData struct {
+	status []int `json:"STATUS"`
+}
+
 // 请求流量数据
 func UpdateAllFlow(db *sql.DB, date time.Time) {
 	yesterday := autils.GetCurrentData(date)
@@ -28,6 +32,10 @@ func UpdateAllFlow(db *sql.DB, date time.Time) {
 
 	someTime := autils.GetCurrentData(date.AddDate(0, 0, -1))
 	timeStr := strings.Replace(someTime, "-", "", -1)
+
+	rsDate := dateProcess(someTime)
+	getWebbData(rsDate)
+
 	fs := flowStruct{
 		timeStr,
 		yesStr,
@@ -96,4 +104,22 @@ func flowRequest(url string) *map[string]interface{} {
 	autils.ErrHadle(err)
 
 	return &val
+}
+
+// Webb数据路由处理
+func dateProcess(d string) string {
+	dateArr := strings.Split(d, "-")[:2]
+	return strings.Join(dateArr, "/") + strings.Replace(d, "-", "", -1)
+}
+
+// 获取webb日志数据
+func getWebbData(datePart string) {
+	res, err := http.Get(config.WebbUrl + datePart)
+	autils.ErrHadle(err)
+
+	body, err := ioutil.ReadAll(res.Body)
+	val := webbData{}
+	json.Unmarshal(body, &val)
+	res.Body.Close()
+	autils.ErrHadle(err)
 }
