@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"time"
+	"strings"
 )
 
 var (
@@ -58,7 +59,9 @@ func main() {
 	if anaType == 4 {
 		// 执行任务
 		rsDate := time.Now().AddDate(0, 0, -1)
-		if date != "" {
+		trimDate := strings.TrimSpace(date)
+		dateReg := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}")
+		if dateReg.MatchString(trimDate) {
 			rsDate, _ = time.Parse(shortForm, date)
 		}
 		runTask(pqDB, rsDate)
@@ -144,4 +147,6 @@ func runTask(db *sql.DB, date time.Time) {
 	tasks.GetQPSites(db, date)
 	// 更新最新接入站点信息
 	tasks.Access(db, date)
+	// 更新webb日志数据
+	//tasks.GetArrivalData(db, date)
 }

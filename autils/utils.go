@@ -35,7 +35,9 @@ func EnsureDir(cwd string) string {
 	// err := os.RemoveAll(dirPath)
 	// ErrHadle(err)
 	mkDirErr := os.MkdirAll(cwd, 0777)
-	ErrHadle(mkDirErr)
+	if mkDirErr != nil {
+		log.Fatal(mkDirErr)
+	}
 	return cwd
 }
 
