@@ -5,7 +5,6 @@ import (
 	"../config"
 	"bufio"
 	"database/sql"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -19,7 +18,6 @@ func StepData(db *sql.DB, date string) {
 	splitStr := "\001"
 	cwd := autils.GetCwd()
 	filePath := filepath.Join(cwd, config.StepPath, shortDate)
-	fmt.Println(filePath)
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -37,13 +35,12 @@ func StepData(db *sql.DB, date string) {
 	}
 
 	// 数据存储
-	storeStepData(bArr)
+	storeStepData(bArr, db)
 }
 
-func storeStepData(bArr []string) {
+func storeStepData(bArr []string, db *sql.DB) {
 	sqlStr := "INSERT INTO mip_step (type, url, count, date, ana_date) VALUES " + strings.Join(bArr, ",")
 
-	fmt.Println(sqlStr)
-	_, err = db.Exec(sqlStr)
+	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
 }
