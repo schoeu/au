@@ -31,7 +31,9 @@ func StepData(db *sql.DB, date string) {
 			break
 		}
 		infoArr := strings.Split(string(a), splitStr)
-		bArr = append(bArr, "('"+infoArr[1]+"', '"+strings.Replace(infoArr[2], "//", "", -1)+"', '"+infoArr[3]+"', '"+date+"', '"+autils.GetCurrentData(time.Now())+"')")
+		if len(infoArr) > 3 {
+			bArr = append(bArr, "('"+infoArr[1]+"', '"+strings.Replace(infoArr[2], "//", "", -1)+"', '"+infoArr[3]+"', '"+date+"', '"+autils.GetCurrentData(time.Now())+"')")
+		}
 	}
 
 	// 数据存储
