@@ -68,7 +68,6 @@ func main() {
 		return
 	} else if anaType == 5 {
 		// mip step part.
-		fmt.Println("anaType", anaType)
 		tasks.StepData(pqDB, date)
 		return
 	}
