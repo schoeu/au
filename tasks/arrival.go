@@ -1,10 +1,10 @@
 package tasks
 
 import (
-	"net/http"
+	"database/sql"
 	"encoding/json"
 	"io/ioutil"
-	"database/sql"
+	"net/http"
 	"time"
 
 	"../autils"
@@ -19,10 +19,10 @@ type arrival struct {
 
 func GetArrivalData(db *sql.DB, date time.Time) {
 
-	t := autils.GetCurrentData(date.AddDate(0,0,-1))
+	t := autils.GetCurrentData(date.AddDate(0, 0, -1))
 
 	// 2017/12/20171220
-	queryStr := strings.Join(strings.Split(t, "-")[:2], "/") +"/"+ strings.Replace(t, "-", "",-1)
+	queryStr := strings.Join(strings.Split(t, "-")[:2], "/") + "/" + strings.Replace(t, "-", "", -1)
 
 	res, err := http.Get(config.WebbUrl + queryStr)
 	autils.ErrHadle(err)

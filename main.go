@@ -66,6 +66,11 @@ func main() {
 		}
 		runTask(pqDB, rsDate)
 		return
+	} else if anaType == 5 {
+		// mip step part.
+		fmt.Println("anaType", anaType)
+		tasks.StepData(pqDB, date)
+		return
 	}
 
 	if anaPath == "" {
@@ -135,7 +140,7 @@ func readDir(path string, cwd string) {
 	}
 }
 
-// 任务列表
+// PSCE任务列表部分
 func runTask(db *sql.DB, date time.Time) {
 	// 更新组件列表
 	tasks.UpdateTags(db)
