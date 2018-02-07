@@ -41,7 +41,7 @@ func StepData(db *sql.DB, date string) {
 }
 
 func storeStepData(bArr []string, db *sql.DB) {
-	sqlStr := "INSERT INTO mip_step (type, url, count, date, ana_date) VALUES " + strings.Join(bArr, ",")
+	sqlStr := "INSERT INTO mip_step (type, url, url_count, date, ana_date) VALUES " + strings.Join(bArr, ",")
 
 	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
