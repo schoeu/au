@@ -1,7 +1,6 @@
 package autils
 
 import (
-	"log"
 	"net/url"
 	"strings"
 )
@@ -25,26 +24,24 @@ type urlInfos struct {
 
 // 获取域名主域
 func GetDomain(l string) urlInfos {
-
 	uInfo := urlInfos{}
-
 	u, err := url.Parse(l)
-	if err != nil {
-		log.Fatal(err)
-	}
+	ErrHadle(err)
+	if err == nil {
+		host := u.Host
+		uInfo.Host = host
+		uInfo.Scheme = u.Scheme
 
-	host := u.Host
-	uInfo.Host = host
-	uInfo.Scheme = u.Scheme
-
-	for _, v := range domainSuffix {
-		if strings.Contains(host, v) {
-			tempStr := strings.Replace(host, v, "", -1)
-			splitRs := strings.Split(tempStr, ".")
-			top := splitRs[len(splitRs)-1:]
-			uInfo.Host = top[0] + v
-			return uInfo
+		for _, v := range domainSuffix {
+			if strings.Contains(host, v) {
+				tempStr := strings.Replace(host, v, "", -1)
+				splitRs := strings.Split(tempStr, ".")
+				top := splitRs[len(splitRs)-1:]
+				uInfo.Host = top[0] + v
+				return uInfo
+			}
 		}
 	}
+
 	return uInfo
 }

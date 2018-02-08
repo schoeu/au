@@ -20,7 +20,6 @@ var (
 	// 需要分析的日志的类型
 	consoleTheme = "%c[0;32;40m%s%c[0m\n"
 	dateRe       = regexp.MustCompile("mip_processor.log.(\\d{4}-\\d{2}-\\d{2})")
-	fileSize     int64
 	anaType      int
 	anaPath      string
 	anaHelper    string
@@ -89,10 +88,6 @@ func main() {
 	// 读取指定目录下文件list
 	readDir(anaPath, tmpPath)
 
-	during := time.Since(time.Now())
-
-	fmt.Printf("File size is %v MB, cost %v\n", fileSize/1048576, during)
-
 	if anaDate == "" {
 		anaDate = autils.GetCurrentData(time.Now())
 	}
@@ -126,7 +121,6 @@ func readDir(path string, cwd string) {
 				}
 			}
 			fmt.Printf(consoleTheme, 0x1B, "process [ "+file.Name()+" ] done!", 0x1B)
-			fileSize += file.Size()
 			fullPath := filepath.Join(path, fileName)
 			if anaType == 1 {
 				analysis.Process(fullPath, cwd, fileName)
