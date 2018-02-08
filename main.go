@@ -74,7 +74,6 @@ func main() {
 		taskName := "dimensions"
 		if !autils.GetFinishFlag(pqDB, taskName, date) {
 			tasks.StepData(pqDB, date)
-			autils.SetFinishFlag(pqDB, taskName)
 		}
 		return
 	}

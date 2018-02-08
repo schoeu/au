@@ -34,5 +34,4 @@ func GetArrivalData(db *sql.DB, date time.Time) {
 	json.Unmarshal(body, &a)
 	res.Body.Close()
 	autils.ErrHadle(err)
-
 }

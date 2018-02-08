@@ -21,6 +21,7 @@ func StepData(db *sql.DB, date string) {
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
 	defer fi.Close()
 	br := bufio.NewReader(fi)
@@ -37,7 +38,11 @@ func StepData(db *sql.DB, date string) {
 	}
 
 	// 数据存储
-	storeStepData(bArr, db)
+	if len(bArr) > 0 {
+		taskName := "dimensions"
+		storeStepData(bArr, db)
+		autils.SetFinishFlag(db, taskName)
+	}
 }
 
 func storeStepData(bArr []string, db *sql.DB) {
