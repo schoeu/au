@@ -78,7 +78,7 @@ func GetCurrentData(date time.Time) string {
 }
 
 func GetPureDate(date string) string {
-	return strings.Split(t, "T")[0]
+	return strings.Split(date, "T")[0]
 }
 
 func SetFinishFlag(db *sql.DB, name string) {
