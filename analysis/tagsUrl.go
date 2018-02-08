@@ -89,12 +89,14 @@ func getDiffUrls(val []string) ([]string, map[string]int) {
 	uniqDomainArr := map[string]int{}
 	for _, v := range val {
 		d := autils.GetDomain(v).Host
-		if uniqDomainArr[d] == 0 {
-			uniqUrlArr = append(uniqUrlArr, v)
-		} else {
-			normalArr = append(normalArr, v)
+		if d != "" {
+			if uniqDomainArr[d] == 0 {
+				uniqUrlArr = append(uniqUrlArr, v)
+			} else {
+				normalArr = append(normalArr, v)
+			}
+			uniqDomainArr[d] += 1
 		}
-		uniqDomainArr[d] += 1
 	}
 	a := append(uniqUrlArr, normalArr...)
 	return a, uniqDomainArr

@@ -57,7 +57,9 @@ func makeMap(cwd string) {
 	for k, _ := range uniqUrlMap {
 		top := autils.GetDomain(k)
 		host := top.Host
-		rsMap[host] = append(rsMap[host], k)
+		if host != "" {
+			rsMap[host] = append(rsMap[host], k)
+		}
 	}
 	MergeInfos(cwd, rsMap)
 }
