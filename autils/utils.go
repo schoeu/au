@@ -77,6 +77,10 @@ func GetCurrentData(date time.Time) string {
 	return strings.Split(t, " ")[0]
 }
 
+func GetPureDate(date string) string {
+	return strings.Split(t, "T")[0]
+}
+
 func SetFinishFlag(db *sql.DB, name string) {
 	sqlStr := "INSERT INTO tasks (name, date) VALUES ('" + name + "', '" + GetCurrentData(time.Now()) + "')"
 
@@ -85,7 +89,7 @@ func SetFinishFlag(db *sql.DB, name string) {
 }
 
 func GetFinishFlag(db *sql.DB, name string, t string) bool {
-	sqlStr := "select date from  tasks where name = " + name + "'')"
+	sqlStr := "select date from  tasks where name = '" + name + "'"
 
 	rows, err := db.Query(sqlStr)
 	ErrHadle(err)
@@ -99,7 +103,7 @@ func GetFinishFlag(db *sql.DB, name string, t string) bool {
 	ErrHadle(err)
 	defer rows.Close()
 
-	if date == t {
+	if GetPureDate(date) == t {
 		return true
 	}
 	return false
