@@ -12,8 +12,8 @@ import (
 	"log"
 	"path/filepath"
 	"regexp"
-	"time"
 	"strings"
+	"time"
 )
 
 var (
@@ -46,10 +46,17 @@ func main() {
 
 	flag.Parse()
 
+	dateReg := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}")
 	rsPQUrl := config.PQFlowUrl
 	// 是否开启调试模式
 	if isDebug != "" {
 		rsPQUrl = config.PQTestUrl
+	}
+
+	trimDate := strings.TrimSpace(date)
+	if !dateReg.MatchString(trimDate) {
+		rsDate := time.Now().AddDate(0, 0, -1)
+		date = autils.GetCurrentData(rsDate)
 	}
 
 	pqDB := autils.OpenDb("postgres", rsPQUrl)
@@ -57,22 +64,18 @@ func main() {
 
 	if anaType == 4 {
 		// 执行任务
-		rsDate := time.Now().AddDate(0, 0, -1)
-		trimDate := strings.TrimSpace(date)
-		dateReg := regexp.MustCompile("\\d{4}-\\d{2}-\\d{2}")
-		if dateReg.MatchString(trimDate) {
-			rsDate, _ = time.Parse(shortForm, date)
+		d, err := time.Parse(shortForm, date)
+		if err == nil {
+			runTask(pqDB, d)
 		}
-		runTask(pqDB, rsDate)
 		return
 	} else if anaType == 5 {
 		// mip step part.
-		tasks.StepData(pqDB, date)
-		return
-	}
-
-	if anaPath == "" {
-		log.Fatal("Invild log path string.")
+		taskName := "dimensions"
+		if !autils.GetFinishFlag(pqDB, taskName, date) {
+			tasks.StepData(pqDB, date)
+			autils.SetFinishFlag(pqDB, taskName)
+		}
 		return
 	}
 
@@ -80,7 +83,10 @@ func main() {
 
 	// 获取临时路径
 	tmpPath := autils.GetCwd()
-
+	if anaPath == "" {
+		log.Fatal("Invild log path string.")
+		return
+	}
 	if !filepath.IsAbs(anaPath) {
 		anaPath = filepath.Join(tmpPath, "..", anaPath)
 	}

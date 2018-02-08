@@ -76,3 +76,31 @@ func GetCurrentData(date time.Time) string {
 	t := date.String()
 	return strings.Split(t, " ")[0]
 }
+
+func SetFinishFlag(db *sql.DB, name string) {
+	sqlStr := "INSERT INTO tasks (name, date) VALUES ('" + name + "', '" + GetCurrentData(time.Now()) + "')"
+
+	_, err := db.Exec(sqlStr)
+	ErrHadle(err)
+}
+
+func GetFinishFlag(db *sql.DB, name string, t string) bool {
+	sqlStr := "select date from  tasks where name = " + name + "'')"
+
+	rows, err := db.Query(sqlStr)
+	ErrHadle(err)
+
+	var date string
+	for rows.Next() {
+		err := rows.Scan(&date)
+		ErrHadle(err)
+	}
+	err = rows.Err()
+	ErrHadle(err)
+	defer rows.Close()
+
+	if date == t {
+		return true
+	}
+	return false
+}
