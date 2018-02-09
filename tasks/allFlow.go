@@ -113,13 +113,13 @@ func dateProcess(d string) string {
 }
 
 // 获取webb日志数据
-// func getWebbData(datePart string) {
-// 	res, err := http.Get(config.WebbUrl + datePart)
-// 	autils.ErrHadle(err)
+func getWebbData(datePart string) {
+	res, err := http.Get(config.WebbUrl + datePart)
+	autils.ErrHadle(err)
 
-// 	body, err := ioutil.ReadAll(res.Body)
-// 	val := webbData{}
-// 	json.Unmarshal(body, &val)
-// 	res.Body.Close()
-// 	autils.ErrHadle(err)
-// }
+	body, err := ioutil.ReadAll(res.Body)
+	val := webbData{}
+	json.Unmarshal(body, &val)
+	res.Body.Close()
+	autils.ErrHadle(err)
+}
