@@ -51,7 +51,7 @@ func CustomData(db *sql.DB, date string) {
 	}
 	// 数据存储
 	if len(rs) > 0 {
-		storeCustomData(rs, db)
+		storeCustomData(rs, date, db)
 	}
 }
 
@@ -68,8 +68,8 @@ func arrIndexOf(data []string, sub []string) []int {
 	return pos
 }
 
-func storeCustomData(rs []string, db *sql.DB) {
-	sqlStr := "INSERT INTO custom (total, normal, cust, date, ana_date) VALUES (" + strings.Join(rs, ",") + ", '" + autils.GetCurrentData(time.Now()) + "')"
+func storeCustomData(rs []string, date string, db *sql.DB) {
+	sqlStr := "INSERT INTO custom (total, normal, cust, date, ana_date) VALUES (" + strings.Join(rs, ",") + ", '" + date + "','" + autils.GetCurrentData(time.Now()) + "')"
 	fmt.Println(sqlStr)
 	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
