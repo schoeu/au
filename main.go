@@ -76,6 +76,10 @@ func main() {
 			tasks.StepData(pqDB, date)
 		}
 		return
+	} else if anaType == 6 {
+		// mip custom part.
+		tasks.CustomData(pqDB, date)
+		return
 	}
 
 	logFileRe = regexp.MustCompile(pattern)
