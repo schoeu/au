@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 	"time"
+	"bufio"
+	"io"
 )
 
 // 统一错误处理
@@ -107,4 +109,25 @@ func GetFinishFlag(db *sql.DB, name string, t string) bool {
 		return true
 	}
 	return false
+}
+
+func AnaLogFile(p string, fn func(string)) {
+	if p == "" {
+		log.Fatal("Invild log path string.")
+	}
+	fi, err := os.Open(p)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer fi.Close()
+	br := bufio.NewReader(fi)
+	for {
+		a, _, c := br.ReadLine()
+		if c == io.EOF {
+			break
+		}
+		line := string(a)
+		fn(line)
+	}
 }

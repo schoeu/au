@@ -80,6 +80,10 @@ func main() {
 		// mip custom part.
 		tasks.CustomData(pqDB, date)
 		return
+	} else if anaType == 7 {
+		// mip browsers part.
+		tasks.AnaBrowsers(pqDB)
+		return
 	}
 
 	logFileRe = regexp.MustCompile(pattern)

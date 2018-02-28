@@ -5,7 +5,6 @@ import (
 	"../config"
 	"bufio"
 	"database/sql"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -20,7 +19,6 @@ func CustomData(db *sql.DB, date string) {
 	splitReg := regexp.MustCompile("\\s+")
 	cwd := autils.GetCwd()
 	filePath := filepath.Join(cwd, config.CustomPath, shortDate)
-	fmt.Println(filePath)
 	fi, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
@@ -70,7 +68,6 @@ func arrIndexOf(data []string, sub []string) []int {
 
 func storeCustomData(rs []string, date string, db *sql.DB) {
 	sqlStr := "INSERT INTO custom (total, normal, cust, date, ana_date) VALUES (" + strings.Join(rs, ",") + ", '" + date + "','" + autils.GetCurrentData(time.Now()) + "')"
-	fmt.Println(sqlStr)
 	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
 }
