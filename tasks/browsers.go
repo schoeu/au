@@ -26,14 +26,15 @@ func AnaBrowsers(db *sql.DB, date string) {
 		var bf bytes.Buffer
 
 		contentSplit := splitReg.Split(c, -1)
+		if len(contentSplit) > 1 {
+			bf.WriteString("(")
+			bf.WriteString("'" + contentSplit[0] + "'," + contentSplit[1])
+			bf.WriteString(",")
+			bf.WriteString("'" + autils.GetCurrentData(time.Now()) + "'")
+			bf.WriteString(")")
 
-		bf.WriteString("(")
-		bf.WriteString(strings.Join(contentSplit, ","))
-		bf.WriteString(",")
-		bf.WriteString(autils.GetCurrentData(time.Now()))
-		bf.WriteString(")")
-
-		infoArr = append(infoArr, bf.String())
+			infoArr = append(infoArr, bf.String())
+		}
 	})
 
 	storeBrowsersData(infoArr, db)
