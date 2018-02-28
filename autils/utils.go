@@ -1,15 +1,15 @@
 package autils
 
 import (
+	"bufio"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"io"
 	"log"
 	"os"
 	"strings"
 	"time"
-	"bufio"
-	"io"
 )
 
 // 统一错误处理

@@ -1,11 +1,10 @@
 package tasks
 
 import (
-	"fmt"
+	"bytes"
 	"database/sql"
 	"path/filepath"
 	"regexp"
-	"bytes"
 	"strings"
 	"time"
 
@@ -13,18 +12,17 @@ import (
 	"../config"
 )
 
-func AnaBrowsers(db *sql.DB) {
+func AnaBrowsers(db *sql.DB, date string) {
 	cwd := autils.GetCwd()
-	fileName := "target_out"
+	shortDate := strings.Replace(date, "-", "", -1)
+	fileName := "target_out_" + shortDate
 	filePath := filepath.Join(cwd, config.BrowsersPath, fileName)
-	fmt.Println(filePath)
 
 	splitReg := regexp.MustCompile("\\t")
 
-
 	infoArr := []string{}
-	
-	autils.AnaLogFile(filePath, func (c string) {
+
+	autils.AnaLogFile(filePath, func(c string) {
 		var bf bytes.Buffer
 
 		contentSplit := splitReg.Split(c, -1)
@@ -37,8 +35,6 @@ func AnaBrowsers(db *sql.DB) {
 
 		infoArr = append(infoArr, bf.String())
 	})
-	
-	fmt.Println(infoArr, db)
 }
 
 func storeBrowsersData(rs []string, db *sql.DB) {

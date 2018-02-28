@@ -82,7 +82,7 @@ func main() {
 		return
 	} else if anaType == 7 {
 		// mip browsers part.
-		tasks.AnaBrowsers(pqDB)
+		tasks.AnaBrowsers(pqDB, date)
 		return
 	}
 
