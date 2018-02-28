@@ -35,6 +35,8 @@ func AnaBrowsers(db *sql.DB, date string) {
 
 		infoArr = append(infoArr, bf.String())
 	})
+
+	storeBrowsersData(infoArr, db)
 }
 
 func storeBrowsersData(rs []string, db *sql.DB) {
