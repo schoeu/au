@@ -30,6 +30,8 @@ func AnaBrowsers(db *sql.DB, date string) {
 			bf.WriteString("(")
 			bf.WriteString("'" + contentSplit[0] + "'," + contentSplit[1])
 			bf.WriteString(",")
+			bf.WriteString("'" + date + "'")
+			bf.WriteString(",")
 			bf.WriteString("'" + autils.GetCurrentData(time.Now()) + "'")
 			bf.WriteString(")")
 
@@ -41,7 +43,7 @@ func AnaBrowsers(db *sql.DB, date string) {
 }
 
 func storeBrowsersData(rs []string, db *sql.DB) {
-	sqlStr := "INSERT INTO browsers (type, num, date) VALUES " + strings.Join(rs, ",")
+	sqlStr := "INSERT INTO browsers (type, num, date, ana_date) VALUES " + strings.Join(rs, ",")
 	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
 }
