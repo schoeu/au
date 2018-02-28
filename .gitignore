@@ -23,4 +23,4 @@ config
 au
 mip_step
 mip_custom
-browsers
+mip_browsers
