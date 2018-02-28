@@ -15,8 +15,8 @@ import (
 func AnaBrowsers(db *sql.DB, date string) {
 	cwd := autils.GetCwd()
 	shortDate := strings.Replace(date, "-", "", -1)
-	fileName := "target_out_" + shortDate
-	filePath := filepath.Join(cwd, config.BrowsersPath, fileName)
+	fileName := "target_out"
+	filePath := filepath.Join(cwd, config.BrowsersPath, shortDate, fileName)
 
 	splitReg := regexp.MustCompile("\\t")
 
