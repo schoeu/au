@@ -15,7 +15,7 @@ func AnaThirdParty(db *sql.DB, date string) {
 	cwd := autils.GetCwd()
 	shortDate := strings.Replace(date, "-", "", -1)
 	fileName := "sanfang_click_" + shortDate
-	filePath := filepath.Join(cwd, config.BrowsersPath, fileName)
+	filePath := filepath.Join(cwd, config.ThirdPartyPath, fileName)
 
 	splitReg := regexp.MustCompile("\\001")
 	var contentSplit []string
