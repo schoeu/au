@@ -88,6 +88,10 @@ func main() {
 		// mip thirdparty.
 		tasks.AnaThirdParty(pqDB, date)
 		return
+	} else if anaType == 9 {
+		// mip search part.
+		tasks.AnaSearch(pqDB, date)
+		return
 	}
 
 	logFileRe = regexp.MustCompile(pattern)
