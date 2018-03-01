@@ -15,7 +15,7 @@ func AnaSearch(db *sql.DB, date string) {
 	cwd := autils.GetCwd()
 	shortDate := strings.Replace(date, "-", "", -1)
 	fileName := "sousuo_click_" + shortDate
-	filePath := filepath.Join(cwd, config.ThirdPartyPath, fileName)
+	filePath := filepath.Join(cwd, config.SearchPath, fileName)
 
 	splitReg := regexp.MustCompile("\\001")
 	var contentSplit []string
