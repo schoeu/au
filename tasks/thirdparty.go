@@ -28,7 +28,7 @@ func AnaThirdParty(db *sql.DB, date string) {
 }
 
 func storeThirdData(rs []string, db *sql.DB) {
-	sqlStr := "INSERT INTO thirdparth (total, filter, date, ana_date) VALUES (" + strings.Join(rs, ",") + ")"
+	sqlStr := "INSERT INTO thirdparty (total, filter, date, ana_date) VALUES (" + strings.Join(rs, ",") + ")"
 	_, err := db.Exec(sqlStr)
 	autils.ErrHadle(err)
 }
