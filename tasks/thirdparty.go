@@ -23,7 +23,7 @@ func AnaThirdParty(db *sql.DB, date string) {
 		contentSplit = splitReg.Split(c, -1)
 	})
 
-	contentSplit = append(contentSplit, date, autils.GetCurrentData(time.Now()))
+	contentSplit = append(contentSplit, "'"+date+"'", "'"+autils.GetCurrentData(time.Now())+"'")
 	storeThirdData(contentSplit, db)
 }
 
