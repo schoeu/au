@@ -24,7 +24,7 @@ func AnaSearch(db *sql.DB, date string) {
 	})
 
 	contentSplit = append(contentSplit, "'"+date+"'", "'"+autils.GetCurrentData(time.Now())+"'")
-	storeThirdData(contentSplit, db)
+	storeSearchData(contentSplit, db)
 }
 
 func storeSearchData(rs []string, db *sql.DB) {
