@@ -84,6 +84,10 @@ func main() {
 		// mip browsers part.
 		tasks.AnaBrowsers(pqDB, date)
 		return
+	} else if anaType == 8 {
+		// mip thirdparty.
+		tasks.AnaThirdParty(pqDB, date)
+		return
 	}
 
 	logFileRe = regexp.MustCompile(pattern)
