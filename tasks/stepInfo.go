@@ -39,9 +39,7 @@ func StepData(db *sql.DB, date string) {
 
 	// 数据存储
 	if len(bArr) > 0 {
-		taskName := "dimensions"
 		storeStepData(bArr, db)
-		autils.SetFinishFlag(db, taskName)
 	}
 }
 
